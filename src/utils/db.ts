@@ -107,8 +107,19 @@ const clearStore = (storeName: string): Promise<void> => {
 
 export const getDBCashTransactions = async (): Promise<CashTransaction[]> => {
   const data = await getStoreData<CashTransaction>(STORES.CASH);
+  const queueTxs = await getStoreData<SyncQueueItem>(STORES.QUEUE);
+  
+  const cashHistoryList = [...data];
+  
+  // Ambil transaksi kas yang masih mengantre di offline sync agar tampil secara real-time
+  queueTxs.forEach((q) => {
+    if (q.type === 'cash') {
+      cashHistoryList.push(q.data as CashTransaction);
+    }
+  });
+
   // Urutkan tanggal terbaru di atas
-  return data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return cashHistoryList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
 export const addDBCashTransaction = async (tx: CashTransaction): Promise<void> => {
@@ -117,13 +128,32 @@ export const addDBCashTransaction = async (tx: CashTransaction): Promise<void> =
 
 export const getDBCashBalance = async (): Promise<{ totalIn: number; totalOut: number; balance: number }> => {
   const txs = await getStoreData<CashTransaction>(STORES.CASH);
+  const queueTxs = await getStoreData<SyncQueueItem>(STORES.QUEUE);
+  
   let totalIn = 0;
   let totalOut = 0;
+  
+  // 1. Hitung transaksi kas yang sudah tersinkronisasi
   txs.forEach((t) => {
     if (t.type === 'pemasukan') totalIn += t.amount;
     else totalOut += t.amount;
   });
+
+  // 2. Tambahkan transaksi kas yang masih dalam antrean offline agar saldo tetap akurat
+  queueTxs.forEach((q) => {
+    if (q.type === 'cash') {
+      const t = q.data as CashTransaction;
+      if (t.type === 'pemasukan') totalIn += t.amount;
+      else totalOut += t.amount;
+    }
+  });
+
   return { totalIn, totalOut, balance: totalIn - totalOut };
+};
+
+// Menghapus transaksi kas berdasarkan ID
+export const deleteDBCashTransaction = async (id: string): Promise<void> => {
+  await deleteData(STORES.CASH, id);
 };
 
 // --- OPERASI INVENTARIS PROMISE API ---
@@ -135,6 +165,11 @@ export const getDBInventoryTransactions = async (): Promise<InventoryTransaction
 
 export const addDBInventoryTransaction = async (tx: InventoryTransaction): Promise<void> => {
   await putData<InventoryTransaction>(STORES.INVENTORY, tx);
+};
+
+// Menghapus transaksi inventaris (mutasi) berdasarkan ID
+export const deleteDBInventoryTransaction = async (id: string): Promise<void> => {
+  await deleteData(STORES.INVENTORY, id);
 };
 
 // Menghitung stok saat ini dengan menggabungkan transaksi utama + mutasi yang mengantre di offline sync

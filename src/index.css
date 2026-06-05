@@ -1003,3 +1003,90 @@ body {
     opacity: 1;
   }
 }
+
+/* --- MODAL PRATAMPIL FOTO BUKTI TRANSAKSI --- */
+.image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  background-color: rgba(6, 9, 19, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.image-modal-content {
+  position: relative;
+  max-width: 95%;
+  max-height: 90%;
+  background-color: rgba(13, 20, 38, 0.95);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  cursor: default;
+}
+
+@media (min-width: 768px) {
+  .image-modal-content {
+    max-width: 80%;
+  }
+}
+
+.image-modal-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  background: linear-gradient(135deg, var(--danger) 0%, var(--danger-hover) 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10002;
+}
+
+.image-modal-close:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px var(--danger-glow);
+}
+
+.image-modal-img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 12px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Animasi Fade In Universal */
+.animate-in-fade {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

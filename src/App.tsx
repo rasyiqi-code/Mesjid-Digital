@@ -9,12 +9,16 @@ import {
   initDB,
   seedDBInitialData, 
   getDBCashBalance,
+  getDBCashTransactions,
   getDBInventoryTransactions,
   getDBInventoryItems,
   getDBSyncQueue,
   addDBCashTransaction, 
   addDBInventoryTransaction,
-  addDBSyncQueue
+  addDBSyncQueue,
+  deleteDBCashTransaction,
+  deleteDBInventoryTransaction,
+  deleteDBSyncQueue
 } from './utils/db';
 import type { 
   CashTransaction, 
@@ -32,8 +36,11 @@ import {
   AlertCircle, 
   X,
   Search,
-  PackageCheck
+  PackageCheck,
+  Trash2
 } from 'lucide-react';
+import { CashHistory } from './components/CashHistory';
+import { ImageModal } from './components/ImageModal';
 
 function App() {
   // State pemicu pembaruan UI lintas komponen
@@ -49,6 +56,8 @@ function App() {
   const [invItems, setInvItems] = useState<InventoryItem[]>([]);
   const [invHistory, setInvHistory] = useState<InventoryTransaction[]>([]);
   const [criticalItems, setCriticalItems] = useState<InventoryItem[]>([]);
+  const [cashHistory, setCashHistory] = useState<CashTransaction[]>([]);
+  const [activeModalImage, setActiveModalImage] = useState<string | null>(null);
 
   // Mengambil seluruh data asinkron dari IndexedDB secara terpusat
   const loadAllData = useCallback(async () => {
@@ -57,11 +66,13 @@ function App() {
       const currentQueue = await getDBSyncQueue();
       const allItems = await getDBInventoryItems();
       const allTx = await getDBInventoryTransactions();
+      const allCash = await getDBCashTransactions();
 
       setCashSummary(balanceData);
       setQueueList(currentQueue);
       setInvItems(allItems);
       setInvHistory(allTx);
+      setCashHistory(allCash);
       
       // Barang dengan stok di bawah 10 unit dianggap kritis
       setCriticalItems(allItems.filter(item => item.stock < 10));
@@ -161,6 +172,44 @@ function App() {
     }
   };
 
+  // Handler penghapusan transaksi kas
+  const handleDeleteCash = async (id: string) => {
+    try {
+      // Periksa apakah ini transaksi offline yang belum disinkronkan
+      const queueItem = queueList.find((item) => item.type === 'cash' && (item.data as CashTransaction).id === id);
+      if (queueItem) {
+        await deleteDBSyncQueue(queueItem.id);
+        showToast('Transaksi kas pending berhasil dibatalkan dari antrean.', 'success');
+      } else {
+        await deleteDBCashTransaction(id);
+        showToast('Transaksi kas berhasil dihapus.', 'success');
+      }
+      handleDataUpdated();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menghapus transaksi kas.', 'error');
+    }
+  };
+
+  // Handler penghapusan transaksi mutasi barang
+  const handleDeleteInventory = async (id: string) => {
+    try {
+      // Periksa apakah ini transaksi offline yang belum disinkronkan
+      const queueItem = queueList.find((item) => item.type === 'inventory' && (item.data as InventoryTransaction).id === id);
+      if (queueItem) {
+        await deleteDBSyncQueue(queueItem.id);
+        showToast('Mutasi barang pending berhasil dibatalkan dari antrean.', 'success');
+      } else {
+        await deleteDBInventoryTransaction(id);
+        showToast('Mutasi barang berhasil dihapus.', 'success');
+      }
+      handleDataUpdated();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menghapus transaksi barang.', 'error');
+    }
+  };
+
   // Filter inventaris berdasarkan nama barang pencarian
   const filteredInvItems = invItems.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -234,11 +283,20 @@ function App() {
         )}
 
         {activeTab === 'catat_kas' && (
-          <CashTransactionForm
-            isOnline={isOnline}
-            onSave={handleSaveCash}
-            showToast={showToast}
-          />
+          <div className="dashboard-details-grid">
+            <CashTransactionForm
+              isOnline={isOnline}
+              onSave={handleSaveCash}
+              showToast={showToast}
+            />
+            <div className="glass-card">
+              <CashHistory
+                cashTransactions={cashHistory}
+                onDelete={handleDeleteCash}
+                onViewImage={(url) => setActiveModalImage(url)}
+              />
+            </div>
+          </div>
         )}
 
         {activeTab === 'catat_barang' && (
@@ -359,12 +417,13 @@ function App() {
                           <th>Barang</th>
                           <th>Aktivitas</th>
                           <th>Keterangan / Donatur</th>
+                          <th style={{ textAlign: 'center' }}>Aksi</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filteredInvHistory.length === 0 ? (
                           <tr>
-                            <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                            <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
                               Tidak ada riwayat mutasi barang.
                             </td>
                           </tr>
@@ -383,6 +442,20 @@ function App() {
                               </td>
                               <td style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
                                 {tx.type === 'masuk' ? (tx.donatur || 'Hamba Allah') : (tx.description || '-')}
+                              </td>
+                              <td style={{ textAlign: 'center' }}>
+                                <button
+                                  onClick={() => {
+                                    if (confirm(`Apakah Anda yakin ingin menghapus mutasi barang "${tx.itemName}"?`)) {
+                                      handleDeleteInventory(tx.id);
+                                    }
+                                  }}
+                                  className="btn btn-danger"
+                                  style={{ padding: '0.25rem', minHeight: '32px', minWidth: '32px', borderRadius: '6px', display: 'inline-flex' }}
+                                  title="Hapus Mutasi"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
                               </td>
                             </tr>
                           ))
@@ -407,15 +480,29 @@ function App() {
                             {tx.type === 'masuk' ? 'Barang Masuk' : 'Barang Keluar'}
                           </span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                          <div style={{ flex: 1 }}>
                             <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{tx.itemName}</h4>
                             <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
                               {tx.type === 'masuk' ? `Donatur: ${tx.donatur || 'Hamba Allah'}` : `Detail: ${tx.description || '-'}`}
                             </p>
                           </div>
-                          <div style={{ fontWeight: 800, fontSize: '0.95rem', color: tx.type === 'masuk' ? 'var(--primary)' : 'var(--danger)' }}>
-                            {tx.type === 'masuk' ? '+' : '-'}{tx.amount} {tx.unit}
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: tx.type === 'masuk' ? 'var(--primary)' : 'var(--danger)' }}>
+                              {tx.type === 'masuk' ? '+' : '-'}{tx.amount} {tx.unit}
+                            </div>
+                            <button
+                              onClick={() => {
+                                if (confirm(`Apakah Anda yakin ingin menghapus mutasi barang "${tx.itemName}"?`)) {
+                                  handleDeleteInventory(tx.id);
+                                }
+                              }}
+                              className="btn btn-danger"
+                              style={{ padding: '0.25rem', minHeight: '32px', minWidth: '32px', borderRadius: '6px', display: 'inline-flex' }}
+                              title="Hapus Mutasi"
+                            >
+                              <Trash2 size={14} />
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -435,6 +522,14 @@ function App() {
           />
         )}
       </main>
+
+      {/* Modal Pratinjau Foto Bukti Transaksi */}
+      {activeModalImage && (
+        <ImageModal
+          imageUrl={activeModalImage}
+          onClose={() => setActiveModalImage(null)}
+        />
+      )}
 
       {/* Toast Floating Notification System */}
       <div className="toasts-wrapper">

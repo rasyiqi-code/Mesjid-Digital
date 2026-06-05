@@ -1,23 +1,28 @@
 import React, { useState, useRef } from 'react';
-import { Camera, X, Save, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { Camera, X, Save, ArrowDownLeft, ArrowUpRight, Loader2 } from 'lucide-react';
 import type { CashTransaction } from '../utils/storage';
+import { uploadImageToDrive } from '../utils/sheetsApi';
+import type { SheetsConfig } from '../utils/sheetsApi';
 
 interface CashTransactionFormProps {
   isOnline: boolean;
   onSave: (transaction: Omit<CashTransaction, 'id' | 'date'>) => void;
   showToast: (msg: string, type: 'success' | 'info' | 'error') => void;
+  sheetsConfig?: SheetsConfig; // Opsional: jika diset, foto diupload ke Google Drive
 }
 
 export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
   isOnline,
   onSave,
   showToast,
+  sheetsConfig,
 }) => {
   const [type, setType] = useState<'pemasukan' | 'pengeluaran'>('pemasukan');
   const [category, setCategory] = useState<string>('');
   const [amountStr, setAmountStr] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [evidence, setEvidence] = useState<string>('');
+  const [evidence, setEvidence] = useState<string>(''); // base64 atau URL Drive
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Kategori bawaan untuk mempermudah pengisian
@@ -62,7 +67,7 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
     showToast('Foto bukti dihapus.', 'info');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const amount = parseInt(amountStr.replace(/[^0-9]/g, ''), 10);
@@ -76,12 +81,33 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
       return;
     }
 
+    // Upload foto ke Google Drive jika konfigurasi tersedia dan ada foto terpilih
+    let finalEvidence = evidence;
+    const isDriveUrl = evidence.startsWith('https://drive.google.com/');
+    if (evidence && !isDriveUrl && sheetsConfig?.url && sheetsConfig?.token) {
+      setIsUploadingImage(true);
+      showToast('Mengunggah foto bukti ke Google Drive...', 'info');
+      const uploadResult = await uploadImageToDrive(
+        sheetsConfig,
+        evidence,
+        `bukti_kas_${Date.now()}.jpg`
+      );
+      setIsUploadingImage(false);
+      if (uploadResult.ok && uploadResult.url) {
+        finalEvidence = uploadResult.url;
+        showToast('Foto berhasil diupload ke Google Drive.', 'success');
+      } else {
+        // Fallback: simpan base64 lokal jika upload gagal
+        showToast(`Upload foto gagal (${uploadResult.error ?? 'error'}). Foto disimpan lokal.`, 'info');
+      }
+    }
+
     onSave({
       type,
       category,
       amount,
       description,
-      evidence: evidence || undefined,
+      evidence: finalEvidence || undefined,
     });
 
     // Reset Form
@@ -215,11 +241,14 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
         {/* Tombol Simpan */}
         <button
           type="submit"
+          disabled={isUploadingImage}
           className="btn btn-primary"
           style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
         >
-          <Save size={18} />
-          {isOnline ? 'Simpan Transaksi Kas' : 'Simpan Sementara (Offline)'}
+          {isUploadingImage
+            ? <><Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} /> Mengunggah foto...</>
+            : <><Save size={18} />{isOnline ? 'Simpan Transaksi Kas' : 'Simpan Sementara (Offline)'}</>
+          }
         </button>
 
         {!isOnline && (

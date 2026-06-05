@@ -6,6 +6,7 @@ import { InventoryForm } from './components/InventoryForm';
 import { ReportGenerator } from './components/ReportGenerator';
 import { useOfflineSync } from './hooks/useOfflineSync';
 import { useSettings } from './hooks/useSettings';
+import { syncAllToSheets } from './utils/sheetsApi';
 import { 
   initDB,
   seedDBInitialData, 
@@ -71,7 +72,7 @@ function App() {
   const [activeModalImage, setActiveModalImage] = useState<string | null>(null);
 
   // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
-  const { settings, saveSettings, resetSettings } = useSettings();
+  const { settings, saveSettings, resetSettings, updateLastSynced } = useSettings();
 
   // Mengambil seluruh data asinkron dari IndexedDB secara terpusat
   const loadAllData = useCallback(async () => {
@@ -251,6 +252,29 @@ function App() {
     }
   };
 
+  // Handler sinkronisasi manual seluruh data ke Google Sheets
+  const handleSyncToSheets = useCallback(async () => {
+    if (!settings.appsScriptUrl || !settings.appsScriptToken) {
+      showToast('Konfigurasi URL dan Token Google Apps Script terlebih dahulu di Pengaturan.', 'error');
+      return;
+    }
+    showToast('Memulai sinkronisasi ke Google Sheets...', 'info');
+    const result = await syncAllToSheets(
+      { url: settings.appsScriptUrl, token: settings.appsScriptToken },
+      { kas: cashHistory, barang: invHistory, program: programs }
+    );
+    if (result.ok) {
+      const count = result.counts;
+      updateLastSynced(Date.now());
+      showToast(
+        `Sinkronisasi selesai! Kas: ${count?.kas ?? 0}, Barang: ${count?.barang ?? 0}, Program: ${count?.program ?? 0} baris.`,
+        'success'
+      );
+    } else {
+      showToast(`Sinkronisasi gagal: ${result.error ?? 'Tidak diketahui'}`, 'error');
+    }
+  }, [settings.appsScriptUrl, settings.appsScriptToken, cashHistory, invHistory, programs, showToast, updateLastSynced]);
+
   // Filter inventaris berdasarkan nama barang pencarian
   const filteredInvItems = invItems.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -344,6 +368,7 @@ function App() {
               isOnline={isOnline}
               onSave={handleSaveCash}
               showToast={showToast}
+              sheetsConfig={settings.appsScriptUrl ? { url: settings.appsScriptUrl, token: settings.appsScriptToken } : undefined}
             />
             <div className="glass-card">
               <CashHistory
@@ -600,6 +625,7 @@ function App() {
             settings={settings}
             onSave={saveSettings}
             onReset={resetSettings}
+            onSync={handleSyncToSheets}
             showToast={showToast}
           />
         )}

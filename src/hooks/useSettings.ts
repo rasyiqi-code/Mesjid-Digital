@@ -4,10 +4,14 @@ import { useState, useCallback } from 'react';
 const SETTINGS_KEY = 'mesjid_digital_settings';
 
 export interface AppSettings {
-  mosqueName: string;       // Nama masjid, tampil di Navbar dan PDF laporan
-  dkmName: string;          // Nama organisasi DKM
-  contactNumber: string;    // Nomor kontak pengurus (opsional)
+  mosqueName: string;             // Nama masjid, tampil di Navbar dan PDF laporan
+  dkmName: string;                // Nama organisasi DKM
+  contactNumber: string;          // Nomor kontak pengurus (opsional)
   criticalStockThreshold: number; // Batas stok kritis (default: 10)
+  // Konfigurasi integrasi Google (opsional)
+  appsScriptUrl: string;          // URL Google Apps Script Web App
+  appsScriptToken: string;        // Token keamanan yang sama dengan di Apps Script
+  lastSyncedAt: number | null;    // Timestamp sinkronisasi terakhir (ms), null jika belum pernah
 }
 
 // Nilai default pengaturan jika belum pernah dikonfigurasi
@@ -16,6 +20,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   dkmName: 'DKM Masjid',
   contactNumber: '',
   criticalStockThreshold: 10,
+  appsScriptUrl: '',
+  appsScriptToken: '',
+  lastSyncedAt: null,
 };
 
 // Muat pengaturan dari localStorage, fallback ke nilai default
@@ -45,10 +52,23 @@ export const useSettings = () => {
     }
   }, []);
 
+  // Update hanya field lastSyncedAt tanpa perlu rebuild seluruh settings
+  const updateLastSynced = useCallback((timestamp: number) => {
+    setSettings((prev) => {
+      const updated = { ...prev, lastSyncedAt: timestamp };
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
+      } catch {
+        console.error('Gagal menyimpan waktu sinkronisasi.');
+      }
+      return updated;
+    });
+  }, []);
+
   // Reset pengaturan ke nilai default
   const resetSettings = useCallback(() => {
     saveSettings(DEFAULT_SETTINGS);
   }, [saveSettings]);
 
-  return { settings, saveSettings, resetSettings };
+  return { settings, saveSettings, resetSettings, updateLastSynced };
 };

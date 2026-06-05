@@ -5,6 +5,7 @@ import { CashTransactionForm } from './components/CashTransactionForm';
 import { InventoryForm } from './components/InventoryForm';
 import { ReportGenerator } from './components/ReportGenerator';
 import { useOfflineSync } from './hooks/useOfflineSync';
+import { useSettings } from './hooks/useSettings';
 import { 
   initDB,
   seedDBInitialData, 
@@ -18,13 +19,17 @@ import {
   addDBSyncQueue,
   deleteDBCashTransaction,
   deleteDBInventoryTransaction,
-  deleteDBSyncQueue
+  deleteDBSyncQueue,
+  getDBPrograms,
+  addDBProgram,
+  deleteDBProgram
 } from './utils/db';
 import type { 
   CashTransaction, 
   InventoryTransaction,
   SyncQueueItem,
-  InventoryItem
+  InventoryItem,
+  MosqueProgram
 } from './utils/storage';
 import { 
   LayoutDashboard, 
@@ -37,10 +42,15 @@ import {
   X,
   Search,
   PackageCheck,
-  Trash2
+  Trash2,
+  CalendarCheck,
+  Settings2
 } from 'lucide-react';
 import { CashHistory } from './components/CashHistory';
 import { ImageModal } from './components/ImageModal';
+import { InventoryHistory } from './components/InventoryHistory';
+import { ProgramManager } from './components/ProgramManager';
+import { SettingsPanel } from './components/SettingsPanel';
 
 function App() {
   // State pemicu pembaruan UI lintas komponen
@@ -57,7 +67,11 @@ function App() {
   const [invHistory, setInvHistory] = useState<InventoryTransaction[]>([]);
   const [criticalItems, setCriticalItems] = useState<InventoryItem[]>([]);
   const [cashHistory, setCashHistory] = useState<CashTransaction[]>([]);
+  const [programs, setPrograms] = useState<MosqueProgram[]>([]);
   const [activeModalImage, setActiveModalImage] = useState<string | null>(null);
+
+  // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
+  const { settings, saveSettings, resetSettings } = useSettings();
 
   // Mengambil seluruh data asinkron dari IndexedDB secara terpusat
   const loadAllData = useCallback(async () => {
@@ -67,15 +81,19 @@ function App() {
       const allItems = await getDBInventoryItems();
       const allTx = await getDBInventoryTransactions();
       const allCash = await getDBCashTransactions();
+      const allPrograms = await getDBPrograms();
 
       setCashSummary(balanceData);
       setQueueList(currentQueue);
       setInvItems(allItems);
       setInvHistory(allTx);
       setCashHistory(allCash);
-      
-      // Barang dengan stok di bawah 10 unit dianggap kritis
-      setCriticalItems(allItems.filter(item => item.stock < 10));
+      setPrograms(allPrograms);
+
+      // Barang dengan stok di bawah threshold kritis (dari pengaturan)
+      const storedSettings = JSON.parse(localStorage.getItem('mesjid_digital_settings') ?? '{}');
+      const threshold = storedSettings.criticalStockThreshold ?? 10;
+      setCriticalItems(allItems.filter(item => item.stock < threshold));
     } catch (err) {
       console.error('Gagal memuat data dari IndexedDB:', err);
     }
@@ -210,6 +228,29 @@ function App() {
     }
   };
 
+  // Handler tambah program kegiatan masjid
+  const handleAddProgram = async (program: MosqueProgram) => {
+    try {
+      await addDBProgram(program);
+      handleDataUpdated();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menambahkan program kegiatan.', 'error');
+    }
+  };
+
+  // Handler hapus program kegiatan masjid
+  const handleDeleteProgram = async (id: string) => {
+    try {
+      await deleteDBProgram(id);
+      showToast('Program kegiatan berhasil dihapus.', 'success');
+      handleDataUpdated();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menghapus program kegiatan.', 'error');
+    }
+  };
+
   // Filter inventaris berdasarkan nama barang pencarian
   const filteredInvItems = invItems.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -230,6 +271,7 @@ function App() {
         queueCount={queueCount}
         onToggleSim={toggleConnectionSim}
         onManualSync={triggerSync}
+        mosqueName={settings.mosqueName}
       />
 
       {/* Tabs Menu */}
@@ -263,11 +305,25 @@ function App() {
           Inventaris
         </button>
         <button
+          onClick={() => setActiveTab('program')}
+          className={`tab-btn ${activeTab === 'program' ? 'active' : ''}`}
+        >
+          <CalendarCheck size={18} />
+          Program
+        </button>
+        <button
           onClick={() => setActiveTab('laporan')}
           className={`tab-btn ${activeTab === 'laporan' ? 'active' : ''}`}
         >
           <FileText size={18} />
           Laporan
+        </button>
+        <button
+          onClick={() => setActiveTab('pengaturan')}
+          className={`tab-btn ${activeTab === 'pengaturan' ? 'active' : ''}`}
+        >
+          <Settings2 size={18} />
+          Pengaturan
         </button>
       </div>
 
@@ -300,12 +356,20 @@ function App() {
         )}
 
         {activeTab === 'catat_barang' && (
-          <InventoryForm
-            isOnline={isOnline}
-            onSave={handleSaveInventory}
-            showToast={showToast}
-            updateTrigger={updateTrigger}
-          />
+          <div className="dashboard-details-grid">
+            <InventoryForm
+              isOnline={isOnline}
+              onSave={handleSaveInventory}
+              showToast={showToast}
+              updateTrigger={updateTrigger}
+            />
+            <div className="glass-card">
+              <InventoryHistory
+                transactions={invHistory}
+                onDelete={handleDeleteInventory}
+              />
+            </div>
+          </div>
         )}
 
         {activeTab === 'inventaris' && (
@@ -515,10 +579,28 @@ function App() {
           </div>
         )}
 
+        {activeTab === 'program' && (
+          <ProgramManager
+            programs={programs}
+            onAdd={handleAddProgram}
+            onDelete={handleDeleteProgram}
+            showToast={showToast}
+          />
+        )}
+
         {activeTab === 'laporan' && (
           <ReportGenerator 
             showToast={showToast}
             updateTrigger={updateTrigger}
+          />
+        )}
+
+        {activeTab === 'pengaturan' && (
+          <SettingsPanel
+            settings={settings}
+            onSave={saveSettings}
+            onReset={resetSettings}
+            showToast={showToast}
           />
         )}
       </main>

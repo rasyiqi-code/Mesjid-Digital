@@ -39,6 +39,21 @@ export interface SyncQueueItem {
   timestamp: number;
 }
 
+// Tipe data jadwal program/kegiatan masjid
+export interface MosqueProgram {
+  id: string;
+  title: string;                             // Judul kegiatan, misal: "Kajian Ahad Pagi"
+  dayOrDate: string;                         // Hari (misal: "Ahad") atau tanggal ISO (misal: "2026-06-10")
+  time: string;                              // Waktu mulai, misal: "07:00"
+  location: string;                          // Tempat kegiatan, misal: "Aula Masjid"
+  picName: string;                           // Penanggung jawab
+  description?: string;                      // Deskripsi opsional
+  isRecurring: boolean;                      // true = rutin mingguan/bulanan, false = sekali
+  recurrenceType?: 'weekly' | 'monthly';     // Jenis pengulangan jika rutin
+  createdAt: number;                         // Timestamp pembuatan (ms)
+}
+
+
 // Kunci penyimpanan LocalStorage
 const KEYS = {
   CASH_TRANSACTIONS: 'mesjid_digital_cash_transactions',

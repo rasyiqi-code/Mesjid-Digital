@@ -9,6 +9,7 @@ interface NavbarProps {
   queueCount: number;
   onToggleSim: () => void;
   onManualSync: () => void;
+  mosqueName?: string; // Nama masjid dari pengaturan, fallback ke default
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -19,13 +20,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   queueCount,
   onToggleSim,
   onManualSync,
+  mosqueName = 'Masjid Digital',
 }) => {
   return (
     <header className="nav-header">
       <div className="logo-section">
         <Moon className="logo-icon" size={32} />
         <div>
-          <h1 className="logo-title">Mesjid Digital</h1>
+          <h1 className="logo-title">{mosqueName}</h1>
           <p className="logo-desc">
             Sistem Informasi & Manajemen Mandiri
           </p>

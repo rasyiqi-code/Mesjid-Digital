@@ -1,11 +1,12 @@
-import type { CashTransaction, InventoryTransaction, SyncQueueItem, InventoryItem } from './storage';
+import type { CashTransaction, InventoryTransaction, SyncQueueItem, InventoryItem, MosqueProgram } from './storage';
 
 const DB_NAME = 'mesjid_digital_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // Dinaikkan ke 2 karena penambahan store 'programs'
 const STORES = {
   CASH: 'cash_transactions',
   INVENTORY: 'inventory_transactions',
   QUEUE: 'sync_queue',
+  PROGRAMS: 'programs',
 };
 
 // Inisialisasi IndexedDB asinkron berbasis Promise
@@ -37,6 +38,13 @@ export const initDB = (): Promise<IDBDatabase> => {
       // Buat store antrean sinkronisasi jika belum ada
       if (!db.objectStoreNames.contains(STORES.QUEUE)) {
         db.createObjectStore(STORES.QUEUE, { keyPath: 'id' });
+      }
+
+      // Buat store jadwal program masjid (DB version 2)
+      if (!db.objectStoreNames.contains(STORES.PROGRAMS)) {
+        const programStore = db.createObjectStore(STORES.PROGRAMS, { keyPath: 'id' });
+        // Indeks untuk sorting berdasarkan waktu pembuatan
+        programStore.createIndex('createdAt', 'createdAt', { unique: false });
       }
     };
   });
@@ -348,3 +356,22 @@ export const seedDBInitialData = async (): Promise<void> => {
     }
   }
 };
+
+// --- OPERASI PROGRAM MASJID PROMISE API ---
+
+// Ambil seluruh jadwal program masjid, diurutkan dari terbaru
+export const getDBPrograms = async (): Promise<MosqueProgram[]> => {
+  const data = await getStoreData<MosqueProgram>(STORES.PROGRAMS);
+  return data.sort((a, b) => b.createdAt - a.createdAt);
+};
+
+// Tambah atau perbarui jadwal program
+export const addDBProgram = async (program: MosqueProgram): Promise<void> => {
+  await putData<MosqueProgram>(STORES.PROGRAMS, program);
+};
+
+// Hapus jadwal program berdasarkan ID
+export const deleteDBProgram = async (id: string): Promise<void> => {
+  await deleteData(STORES.PROGRAMS, id);
+};
+

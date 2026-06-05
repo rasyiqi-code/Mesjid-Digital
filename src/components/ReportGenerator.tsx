@@ -466,7 +466,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
           {/* Pilih Jenis Laporan */}
           <div className="form-group">
             <label className="form-label">Pilih Jenis Laporan</label>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div className="report-select-grid">
               <button
                 onClick={() => { setReportType('kas'); setIsGenerated(false); }}
                 className={`btn ${reportType === 'kas' ? 'btn-primary' : 'btn-secondary'}`}
@@ -546,7 +546,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
         <div className="glass-card animate-in-fade" style={{ textAlign: 'left' }}>
           
           {/* Header Aksi Ekspor / Berbagi */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+          <div className="flex-mobile-col" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
             <div>
               <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Pratinjau Hasil Laporan</h4>
               <p style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
@@ -555,7 +555,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
             </div>
             
             {/* Tombol Bagikan / Expor */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div className="report-action-group">
               <button
                 onClick={handleExportPDF}
                 className="btn btn-primary"

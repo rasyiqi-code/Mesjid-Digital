@@ -254,7 +254,7 @@ function App() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             
             {/* Filter/Pencarian Barang */}
-            <div className="glass-card" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="glass-card flex-mobile-col">
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Daftar Inventaris Gudang</h3>
               <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
                 <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />

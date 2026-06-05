@@ -144,7 +144,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
         {/* Toggle Barang Masuk / Keluar */}
         <div className="form-group">
           <label className="form-label">Jenis Logistik Barang</label>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="form-toggle-group">
             <button
               type="button"
               onClick={() => { setType('masuk'); }}

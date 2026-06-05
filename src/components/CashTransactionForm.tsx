@@ -103,7 +103,7 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
         {/* Toggle Pemasukan / Pengeluaran */}
         <div className="form-group">
           <label className="form-label">Jenis Transaksi Kas</label>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="form-toggle-group">
             <button
               type="button"
               onClick={() => { setType('pemasukan'); setCategory(''); }}

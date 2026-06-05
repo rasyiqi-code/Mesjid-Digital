@@ -684,6 +684,18 @@ body {
   list-style: none;
 }
 
+/* Pembungkus input pencarian responsif */
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .search-input-wrapper {
+    max-width: 300px;
+  }
+}
+
 .suggestion-item {
   padding: 0.75rem 1rem; /* Padding sentuh */
   font-size: 0.875rem;

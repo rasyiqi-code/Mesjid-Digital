@@ -620,43 +620,77 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                 Rincian Transaksi
               </h5>
               
-              <div className="table-container">
-                <table className="custom-table">
-                  <thead>
-                    <tr>
-                      <th>Tanggal</th>
-                      <th>Jenis</th>
-                      <th>Kategori</th>
-                      <th>Deskripsi</th>
-                      <th>Nominal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {reportData.cashSummary.transactions.length === 0 ? (
+              {/* Tampilan Desktop: Tabel */}
+              <div className="desktop-table-view">
+                <div className="table-container">
+                  <table className="custom-table">
+                    <thead>
                       <tr>
-                        <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
-                          Tidak ada data transaksi kas pada periode ini.
-                        </td>
+                        <th>Tanggal</th>
+                        <th>Jenis</th>
+                        <th>Kategori</th>
+                        <th>Deskripsi</th>
+                        <th>Nominal</th>
                       </tr>
-                    ) : (
-                      reportData.cashSummary.transactions.map((t) => (
-                        <tr key={t.id}>
-                          <td>{t.date}</td>
-                          <td>
-                            <span className={`badge ${t.type === 'pemasukan' ? 'in' : 'out'}`}>
-                              {t.type === 'pemasukan' ? 'Masuk' : 'Keluar'}
-                            </span>
-                          </td>
-                          <td style={{ fontWeight: 600 }}>{t.category}</td>
-                          <td style={{ color: 'var(--text-secondary)' }}>{t.description || '-'}</td>
-                          <td style={{ fontWeight: 700, color: t.type === 'pemasukan' ? 'var(--primary)' : 'var(--danger)' }}>
-                            {t.type === 'pemasukan' ? '+' : '-'}{formatRupiah(t.amount)}
+                    </thead>
+                    <tbody>
+                      {reportData.cashSummary.transactions.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                            Tidak ada data transaksi kas pada periode ini.
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        reportData.cashSummary.transactions.map((t) => (
+                          <tr key={t.id}>
+                            <td>{t.date}</td>
+                            <td>
+                              <span className={`badge ${t.type === 'pemasukan' ? 'in' : 'out'}`}>
+                                {t.type === 'pemasukan' ? 'Masuk' : 'Keluar'}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 600 }}>{t.category}</td>
+                            <td style={{ color: 'var(--text-secondary)' }}>{t.description || '-'}</td>
+                            <td style={{ fontWeight: 700, color: t.type === 'pemasukan' ? 'var(--primary)' : 'var(--danger)' }}>
+                              {t.type === 'pemasukan' ? '+' : '-'}{formatRupiah(t.amount)}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Tampilan Mobile: Kartu Vertikal */}
+              <div className="mobile-card-list">
+                {reportData.cashSummary.transactions.length === 0 ? (
+                  <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
+                    Tidak ada data transaksi kas pada periode ini.
+                  </div>
+                ) : (
+                  reportData.cashSummary.transactions.map((t) => (
+                    <div key={t.id} className="mobile-data-card" style={{ display: 'block', padding: '0.85rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                        <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t.date}</span>
+                        <span className={`badge ${t.type === 'pemasukan' ? 'in' : 'out'}`}>
+                          {t.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                          <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{t.category}</h4>
+                          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                            {t.description || '-'}
+                          </p>
+                        </div>
+                        <div style={{ fontWeight: 800, fontSize: '0.95rem', color: t.type === 'pemasukan' ? 'var(--primary)' : 'var(--danger)' }}>
+                          {t.type === 'pemasukan' ? '+' : '-'}{formatRupiah(t.amount)}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
@@ -671,45 +705,79 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                 </p>
               </div>
 
-              <div className="table-container">
-                <table className="custom-table">
-                  <thead>
-                    <tr>
-                      <th>Tanggal</th>
-                      <th>Aktivitas</th>
-                      <th>Nama Barang</th>
-                      <th>Jumlah Mutasi</th>
-                      <th>Donatur / Keterangan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {reportData.stockSummary.transactions.length === 0 ? (
+              {/* Tampilan Desktop: Tabel */}
+              <div className="desktop-table-view">
+                <div className="table-container">
+                  <table className="custom-table">
+                    <thead>
                       <tr>
-                        <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
-                          Tidak ada transaksi logistik barang pada periode ini.
-                        </td>
+                        <th>Tanggal</th>
+                        <th>Aktivitas</th>
+                        <th>Nama Barang</th>
+                        <th>Jumlah Mutasi</th>
+                        <th>Donatur / Keterangan</th>
                       </tr>
-                    ) : (
-                      reportData.stockSummary.transactions.map((t) => (
-                        <tr key={t.id}>
-                          <td>{t.date}</td>
-                          <td>
-                            <span className={`badge ${t.type === 'masuk' ? 'in' : 'out'}`}>
-                              {t.type === 'masuk' ? 'Barang Masuk' : 'Barang Keluar'}
-                            </span>
-                          </td>
-                          <td style={{ fontWeight: 600 }}>{t.itemName}</td>
-                          <td style={{ fontWeight: 700 }}>
-                            {t.type === 'masuk' ? '+' : '-'}{t.amount} {t.unit}
-                          </td>
-                          <td style={{ color: 'var(--text-secondary)' }}>
-                            {t.type === 'masuk' ? (t.donatur || 'Hamba Allah') : (t.description || '-')}
+                    </thead>
+                    <tbody>
+                      {reportData.stockSummary.transactions.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                            Tidak ada transaksi logistik barang pada periode ini.
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        reportData.stockSummary.transactions.map((t) => (
+                          <tr key={t.id}>
+                            <td>{t.date}</td>
+                            <td>
+                              <span className={`badge ${t.type === 'masuk' ? 'in' : 'out'}`}>
+                                {t.type === 'masuk' ? 'Barang Masuk' : 'Barang Keluar'}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 600 }}>{t.itemName}</td>
+                            <td style={{ fontWeight: 700 }}>
+                              {t.type === 'masuk' ? '+' : '-'}{t.amount} {t.unit}
+                            </td>
+                            <td style={{ color: 'var(--text-secondary)' }}>
+                              {t.type === 'masuk' ? (t.donatur || 'Hamba Allah') : (t.description || '-')}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Tampilan Mobile: Kartu Vertikal */}
+              <div className="mobile-card-list">
+                {reportData.stockSummary.transactions.length === 0 ? (
+                  <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
+                    Tidak ada transaksi logistik barang pada periode ini.
+                  </div>
+                ) : (
+                  reportData.stockSummary.transactions.map((t) => (
+                    <div key={t.id} className="mobile-data-card" style={{ display: 'block', padding: '0.85rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                        <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t.date}</span>
+                        <span className={`badge ${t.type === 'masuk' ? 'in' : 'out'}`}>
+                          {t.type === 'masuk' ? 'Barang Masuk' : 'Barang Keluar'}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                          <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{t.itemName}</h4>
+                          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                            {t.type === 'masuk' ? `Donatur: ${t.donatur || 'Hamba Allah'}` : `Detail: ${t.description || '-'}`}
+                          </p>
+                        </div>
+                        <div style={{ fontWeight: 800, fontSize: '0.95rem', color: t.type === 'masuk' ? 'var(--primary)' : 'var(--danger)' }}>
+                          {t.type === 'masuk' ? '+' : '-'}{t.amount} {t.unit}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
@@ -724,47 +792,87 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                 </p>
               </div>
 
-              <div className="table-container">
-                <table className="custom-table">
-                  <thead>
-                    <tr>
-                      <th>Nama Barang</th>
-                      <th>Kategori Logistik</th>
-                      <th>Sisa Stok Saat Ini</th>
-                      <th>Satuan Takaran</th>
-                      <th>Status Ketersediaan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {reportData.inventoryList.items.length === 0 ? (
+              {/* Tampilan Desktop: Tabel */}
+              <div className="desktop-table-view">
+                <div className="table-container">
+                  <table className="custom-table">
+                    <thead>
                       <tr>
-                        <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
-                          Gudang masjid kosong. Belum ada barang yang didaftarkan.
-                        </td>
+                        <th>Nama Barang</th>
+                        <th>Kategori Logistik</th>
+                        <th>Sisa Stok Saat Ini</th>
+                        <th>Satuan Takaran</th>
+                        <th>Status Ketersediaan</th>
                       </tr>
-                    ) : (
-                      reportData.inventoryList.items.map((item) => (
-                        <tr key={item.name}>
-                          <td style={{ fontWeight: 600 }}>{item.name}</td>
-                          <td style={{ color: 'var(--text-secondary)' }}>{item.category}</td>
-                          <td style={{ fontWeight: 800, color: item.stock > 0 ? 'var(--text-primary)' : 'var(--danger)' }}>
-                            {item.stock}
-                          </td>
-                          <td>{item.unit}</td>
-                          <td>
-                            {item.stock === 0 ? (
-                              <span className="badge out">Habis</span>
-                            ) : item.stock < 10 ? (
-                              <span className="badge out" style={{ color: 'var(--accent)', background: 'rgba(245, 158, 11, 0.1)' }}>Kritis</span>
-                            ) : (
-                              <span className="badge in">Sangat Cukup</span>
-                            )}
+                    </thead>
+                    <tbody>
+                      {reportData.inventoryList.items.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                            Gudang masjid kosong. Belum ada barang yang didaftarkan.
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        reportData.inventoryList.items.map((item) => (
+                          <tr key={item.name}>
+                            <td style={{ fontWeight: 600 }}>{item.name}</td>
+                            <td style={{ color: 'var(--text-secondary)' }}>{item.category}</td>
+                            <td style={{ fontWeight: 800, color: item.stock > 0 ? 'var(--text-primary)' : 'var(--danger)' }}>
+                              {item.stock}
+                            </td>
+                            <td>{item.unit}</td>
+                            <td>
+                              {item.stock === 0 ? (
+                                <span className="badge out">Habis</span>
+                              ) : item.stock < 10 ? (
+                                <span className="badge out" style={{ color: 'var(--accent)', background: 'rgba(245, 158, 11, 0.1)' }}>Kritis</span>
+                              ) : (
+                                <span className="badge in">Sangat Cukup</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Tampilan Mobile: Kartu Vertikal */}
+              <div className="mobile-card-list">
+                {reportData.inventoryList.items.length === 0 ? (
+                  <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
+                    Gudang masjid kosong. Belum ada barang yang didaftarkan.
+                  </div>
+                ) : (
+                  reportData.inventoryList.items.map((item) => (
+                    <div key={item.name} className="mobile-data-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem' }}>
+                      <div>
+                        <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{item.name}</h4>
+                        <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>{item.category}</span>
+                        <div style={{ marginTop: '0.25rem' }}>
+                          {item.stock === 0 ? (
+                            <span className="badge out" style={{ padding: '0.1rem 0.35rem', fontSize: '0.65rem' }}>Habis</span>
+                          ) : item.stock < 10 ? (
+                            <span className="badge out" style={{ padding: '0.1rem 0.35rem', fontSize: '0.65rem', color: 'var(--accent)', background: 'rgba(245, 158, 11, 0.1)' }}>Kritis</span>
+                          ) : (
+                            <span className="badge in" style={{ padding: '0.1rem 0.35rem', fontSize: '0.65rem' }}>Sangat Cukup</span>
+                          )}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ 
+                          fontSize: '1.05rem', 
+                          fontWeight: 800, 
+                          color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--primary)' 
+                        }}>
+                          {item.stock}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '0.2rem' }}>{item.unit}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

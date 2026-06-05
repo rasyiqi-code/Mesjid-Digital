@@ -256,7 +256,7 @@ function App() {
             {/* Filter/Pencarian Barang */}
             <div className="glass-card flex-mobile-col">
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Daftar Inventaris Gudang</h3>
-              <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
+              <div className="search-input-wrapper">
                 <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                 <input
                   type="text"

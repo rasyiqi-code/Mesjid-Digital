@@ -277,37 +277,68 @@ function App() {
                   Kondisi persediaan barang aktif di gudang
                 </p>
 
-                <div className="table-container">
-                  <table className="custom-table">
-                    <thead>
-                      <tr>
-                        <th>Nama Barang</th>
-                        <th>Kategori</th>
-                        <th>Stok Tersedia</th>
-                        <th>Satuan</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredInvItems.length === 0 ? (
+                {/* Tampilan Desktop: Tabel */}
+                <div className="desktop-table-view">
+                  <div className="table-container">
+                    <table className="custom-table">
+                      <thead>
                         <tr>
-                          <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
-                            Tidak ada barang ditemukan.
-                          </td>
+                          <th>Nama Barang</th>
+                          <th>Kategori</th>
+                          <th>Stok Tersedia</th>
+                          <th>Satuan</th>
                         </tr>
-                      ) : (
-                        filteredInvItems.map((item) => (
-                          <tr key={item.name}>
-                            <td style={{ fontWeight: 600 }}>{item.name}</td>
-                            <td style={{ color: 'var(--text-secondary)' }}>{item.category}</td>
-                            <td style={{ fontWeight: 800, color: item.stock > 0 ? 'var(--text-primary)' : 'var(--danger)' }}>
-                              {item.stock}
+                      </thead>
+                      <tbody>
+                        {filteredInvItems.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                              Tidak ada barang ditemukan.
                             </td>
-                            <td>{item.unit}</td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                        ) : (
+                          filteredInvItems.map((item) => (
+                            <tr key={item.name}>
+                              <td style={{ fontWeight: 600 }}>{item.name}</td>
+                              <td style={{ color: 'var(--text-secondary)' }}>{item.category}</td>
+                              <td style={{ fontWeight: 800, color: item.stock > 0 ? 'var(--text-primary)' : 'var(--danger)' }}>
+                                {item.stock}
+                              </td>
+                              <td>{item.unit}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Tampilan Mobile: Kartu Vertikal */}
+                <div className="mobile-card-list">
+                  {filteredInvItems.length === 0 ? (
+                    <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
+                      Tidak ada barang ditemukan.
+                    </div>
+                  ) : (
+                    filteredInvItems.map((item) => (
+                      <div key={item.name} className="mobile-data-card">
+                        <div>
+                          <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{item.name}</h4>
+                          <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>{item.category}</span>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{ 
+                            fontSize: '1.05rem', 
+                            fontWeight: 800, 
+                            color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--primary)' 
+                          }}>
+                            {item.stock}
+                          </span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '0.2rem' }}>{item.unit}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -318,44 +349,78 @@ function App() {
                   Catatan keluar masuk barang di gudang
                 </p>
 
-                <div className="table-container">
-                  <table className="custom-table">
-                    <thead>
-                      <tr>
-                        <th>Tanggal</th>
-                        <th>Barang</th>
-                        <th>Aktivitas</th>
-                        <th>Keterangan / Donatur</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredInvHistory.length === 0 ? (
+                {/* Tampilan Desktop: Tabel */}
+                <div className="desktop-table-view">
+                  <div className="table-container">
+                    <table className="custom-table">
+                      <thead>
                         <tr>
-                          <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
-                            Tidak ada riwayat mutasi barang.
-                          </td>
+                          <th>Tanggal</th>
+                          <th>Barang</th>
+                          <th>Aktivitas</th>
+                          <th>Keterangan / Donatur</th>
                         </tr>
-                      ) : (
-                        filteredInvHistory.map((tx) => (
-                          <tr key={tx.id}>
-                            <td>{tx.date}</td>
-                            <td style={{ fontWeight: 600 }}>{tx.itemName}</td>
-                            <td>
-                              <span className={`badge ${tx.type === 'masuk' ? 'in' : 'out'}`} style={{ gap: '0.2rem' }}>
-                                {tx.type === 'masuk' ? 'Masuk' : 'Keluar'}
-                                <span style={{ fontWeight: 700 }}>
-                                  ({tx.amount} {tx.unit})
-                                </span>
-                              </span>
-                            </td>
-                            <td style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                              {tx.type === 'masuk' ? (tx.donatur || 'Hamba Allah') : (tx.description || '-')}
+                      </thead>
+                      <tbody>
+                        {filteredInvHistory.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                              Tidak ada riwayat mutasi barang.
                             </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                        ) : (
+                          filteredInvHistory.map((tx) => (
+                            <tr key={tx.id}>
+                              <td>{tx.date}</td>
+                              <td style={{ fontWeight: 600 }}>{tx.itemName}</td>
+                              <td>
+                                <span className={`badge ${tx.type === 'masuk' ? 'in' : 'out'}`} style={{ gap: '0.2rem' }}>
+                                  {tx.type === 'masuk' ? 'Masuk' : 'Keluar'}
+                                  <span style={{ fontWeight: 700 }}>
+                                    ({tx.amount} {tx.unit})
+                                  </span>
+                                </span>
+                              </td>
+                              <td style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                                {tx.type === 'masuk' ? (tx.donatur || 'Hamba Allah') : (tx.description || '-')}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Tampilan Mobile: Kartu Vertikal */}
+                <div className="mobile-card-list">
+                  {filteredInvHistory.length === 0 ? (
+                    <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
+                      Tidak ada riwayat mutasi barang.
+                    </div>
+                  ) : (
+                    filteredInvHistory.map((tx) => (
+                      <div key={tx.id} className="mobile-data-card" style={{ display: 'block', padding: '0.85rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                          <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{tx.date}</span>
+                          <span className={`badge ${tx.type === 'masuk' ? 'in' : 'out'}`}>
+                            {tx.type === 'masuk' ? 'Barang Masuk' : 'Barang Keluar'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{tx.itemName}</h4>
+                            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                              {tx.type === 'masuk' ? `Donatur: ${tx.donatur || 'Hamba Allah'}` : `Detail: ${tx.description || '-'}`}
+                            </p>
+                          </div>
+                          <div style={{ fontWeight: 800, fontSize: '0.95rem', color: tx.type === 'masuk' ? 'var(--primary)' : 'var(--danger)' }}>
+                            {tx.type === 'masuk' ? '+' : '-'}{tx.amount} {tx.unit}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>

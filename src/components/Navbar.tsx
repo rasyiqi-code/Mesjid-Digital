@@ -1,5 +1,5 @@
 import React from 'react';
-import { Moon, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Moon, Wifi, WifiOff, RefreshCw, Settings2 } from 'lucide-react';
 
 interface NavbarProps {
   isOnline: boolean;
@@ -9,6 +9,7 @@ interface NavbarProps {
   queueCount: number;
   onToggleSim: () => void;
   onManualSync: () => void;
+  onOpenSettings: () => void; // Buka tab Pengaturan dari tombol gear di navbar
   mosqueName?: string; // Nama masjid dari pengaturan, fallback ke default
 }
 
@@ -20,6 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   queueCount,
   onToggleSim,
   onManualSync,
+  onOpenSettings,
   mosqueName = 'Masjid Digital',
 }) => {
   return (
@@ -29,7 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div>
           <h1 className="logo-title">{mosqueName}</h1>
           <p className="logo-desc">
-            Sistem Informasi & Manajemen Mandiri
+            Sistem Informasi &amp; Manajemen Mandiri
           </p>
         </div>
       </div>
@@ -89,6 +91,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               Simulasi Online
             </>
           )}
+        </button>
+
+        {/* Tombol Pengaturan — dipindah ke sini agar bottom nav lebih ringkas */}
+        <button
+          onClick={onOpenSettings}
+          className="btn btn-secondary"
+          style={{ padding: '0.4rem 0.6rem', minHeight: '38px' }}
+          title="Pengaturan"
+          aria-label="Buka Pengaturan"
+        >
+          <Settings2 size={18} />
         </button>
       </div>
     </header>

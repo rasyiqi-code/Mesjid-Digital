@@ -43,9 +43,7 @@ import {
   X,
   Search,
   PackageCheck,
-  Trash2,
   CalendarCheck,
-  Settings2
 } from 'lucide-react';
 import { CashHistory } from './components/CashHistory';
 import { ImageModal } from './components/ImageModal';
@@ -70,6 +68,8 @@ function App() {
   const [cashHistory, setCashHistory] = useState<CashTransaction[]>([]);
   const [programs, setPrograms] = useState<MosqueProgram[]>([]);
   const [activeModalImage, setActiveModalImage] = useState<string | null>(null);
+  // Sub-tab di dalam tab Barang: 'catat' = form input, 'stok' = daftar stok gudang
+  const [barangSubTab, setBarangSubTab] = useState<'catat' | 'stok'>('catat');
 
   // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
   const { settings, saveSettings, resetSettings, updateLastSynced } = useSettings();
@@ -280,10 +280,6 @@ function App() {
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredInvHistory = invHistory.filter(tx => 
-    tx.itemName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="app-container">
       {/* Navigasi Atas & Indikator Koneksi */}
@@ -295,10 +291,11 @@ function App() {
         queueCount={queueCount}
         onToggleSim={toggleConnectionSim}
         onManualSync={triggerSync}
+        onOpenSettings={() => setActiveTab('pengaturan')}
         mosqueName={settings.mosqueName}
       />
 
-      {/* Tabs Menu */}
+      {/* Tabs Menu — 5 item utama, Pengaturan di Navbar, Inventaris merge ke Barang */}
       <div className="tabs-container">
         <button
           onClick={() => setActiveTab('dashboard')}
@@ -312,21 +309,14 @@ function App() {
           className={`tab-btn ${activeTab === 'catat_kas' ? 'active' : ''}`}
         >
           <PlusCircle size={18} />
-          Catat Kas
+          Kas
         </button>
         <button
           onClick={() => setActiveTab('catat_barang')}
           className={`tab-btn ${activeTab === 'catat_barang' ? 'active' : ''}`}
         >
           <PackageCheck size={18} />
-          Catat Barang
-        </button>
-        <button
-          onClick={() => setActiveTab('inventaris')}
-          className={`tab-btn ${activeTab === 'inventaris' ? 'active' : ''}`}
-        >
-          <FolderOpen size={18} />
-          Inventaris
+          Barang
         </button>
         <button
           onClick={() => setActiveTab('program')}
@@ -341,13 +331,6 @@ function App() {
         >
           <FileText size={18} />
           Laporan
-        </button>
-        <button
-          onClick={() => setActiveTab('pengaturan')}
-          className={`tab-btn ${activeTab === 'pengaturan' ? 'active' : ''}`}
-        >
-          <Settings2 size={18} />
-          Pengaturan
         </button>
       </div>
 
@@ -381,228 +364,116 @@ function App() {
         )}
 
         {activeTab === 'catat_barang' && (
-          <div className="dashboard-details-grid">
-            <InventoryForm
-              isOnline={isOnline}
-              onSave={handleSaveInventory}
-              showToast={showToast}
-              updateTrigger={updateTrigger}
-            />
-            <div className="glass-card">
-              <InventoryHistory
-                transactions={invHistory}
-                onDelete={handleDeleteInventory}
-              />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Sub-tab: Catat vs Stok */}
+            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.04)', padding: '0.35rem', borderRadius: '14px', maxWidth: '340px', margin: '0 auto', width: '100%' }}>
+              <button
+                onClick={() => setBarangSubTab('catat')}
+                className={`btn ${barangSubTab === 'catat' ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ flex: 1, padding: '0.55rem', fontSize: '0.85rem', borderRadius: '10px' }}
+              >
+                <PackageCheck size={16} /> Catat Barang
+              </button>
+              <button
+                onClick={() => setBarangSubTab('stok')}
+                className={`btn ${barangSubTab === 'stok' ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ flex: 1, padding: '0.55rem', fontSize: '0.85rem', borderRadius: '10px' }}
+              >
+                <FolderOpen size={16} /> Stok Gudang
+              </button>
             </div>
-          </div>
-        )}
 
-        {activeTab === 'inventaris' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            
-            {/* Filter/Pencarian Barang */}
-            <div className="glass-card flex-mobile-col">
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Daftar Inventaris Gudang</h3>
-              <div className="search-input-wrapper">
-                <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
-                <input
-                  type="text"
-                  placeholder="Cari barang..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="form-input"
-                  style={{ paddingLeft: '2.5rem' }}
+            {/* Sub-tab Catat: Form input + riwayat mutasi */}
+            {barangSubTab === 'catat' && (
+              <div className="dashboard-details-grid">
+                <InventoryForm
+                  isOnline={isOnline}
+                  onSave={handleSaveInventory}
+                  showToast={showToast}
+                  updateTrigger={updateTrigger}
                 />
+                <div className="glass-card">
+                  <InventoryHistory
+                    transactions={invHistory}
+                    onDelete={handleDeleteInventory}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="dashboard-details-grid">
-              {/* Rekap Stok Real-Time */}
-              <div className="glass-card" style={{ textAlign: 'left' }}>
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.25rem' }}>Stok Gudang Terkini</h4>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                  Kondisi persediaan barang aktif di gudang
-                </p>
-
-                {/* Tampilan Desktop: Tabel */}
-                <div className="desktop-table-view">
-                  <div className="table-container">
-                    <table className="custom-table">
-                      <thead>
-                        <tr>
-                          <th>Nama Barang</th>
-                          <th>Kategori</th>
-                          <th>Stok Tersedia</th>
-                          <th>Satuan</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredInvItems.length === 0 ? (
-                          <tr>
-                            <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
-                              Tidak ada barang ditemukan.
-                            </td>
-                          </tr>
-                        ) : (
-                          filteredInvItems.map((item) => (
-                            <tr key={item.name}>
-                              <td style={{ fontWeight: 600 }}>{item.name}</td>
-                              <td style={{ color: 'var(--text-secondary)' }}>{item.category}</td>
-                              <td style={{ fontWeight: 800, color: item.stock > 0 ? 'var(--text-primary)' : 'var(--danger)' }}>
-                                {item.stock}
-                              </td>
-                              <td>{item.unit}</td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+            {/* Sub-tab Stok: Daftar stok real-time + pencarian */}
+            {barangSubTab === 'stok' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div className="glass-card flex-mobile-col">
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Stok Gudang Terkini</h3>
+                  <div className="search-input-wrapper">
+                    <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                    <input
+                      type="text"
+                      placeholder="Cari barang..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="form-input"
+                      style={{ paddingLeft: '2.5rem' }}
+                    />
                   </div>
                 </div>
-
-                {/* Tampilan Mobile: Kartu Vertikal */}
-                <div className="mobile-card-list">
-                  {filteredInvItems.length === 0 ? (
-                    <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
-                      Tidak ada barang ditemukan.
-                    </div>
-                  ) : (
-                    filteredInvItems.map((item) => (
-                      <div key={item.name} className="mobile-data-card">
-                        <div>
-                          <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{item.name}</h4>
-                          <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>{item.category}</span>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <span style={{ 
-                            fontSize: '1.05rem', 
-                            fontWeight: 800, 
-                            color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--primary)' 
-                          }}>
-                            {item.stock}
-                          </span>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '0.2rem' }}>{item.unit}</span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-
-              {/* Riwayat Mutasi Logistik */}
-              <div className="glass-card" style={{ textAlign: 'left' }}>
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.25rem' }}>Mutasi Terakhir</h4>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                  Catatan keluar masuk barang di gudang
-                </p>
-
-                {/* Tampilan Desktop: Tabel */}
-                <div className="desktop-table-view">
-                  <div className="table-container">
-                    <table className="custom-table">
-                      <thead>
-                        <tr>
-                          <th>Tanggal</th>
-                          <th>Barang</th>
-                          <th>Aktivitas</th>
-                          <th>Keterangan / Donatur</th>
-                          <th style={{ textAlign: 'center' }}>Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredInvHistory.length === 0 ? (
+                <div className="glass-card" style={{ textAlign: 'left' }}>
+                  {/* Tabel Desktop */}
+                  <div className="desktop-table-view">
+                    <div className="table-container">
+                      <table className="custom-table">
+                        <thead>
                           <tr>
-                            <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
-                              Tidak ada riwayat mutasi barang.
-                            </td>
+                            <th>Nama Barang</th>
+                            <th>Kategori</th>
+                            <th>Stok</th>
+                            <th>Satuan</th>
                           </tr>
-                        ) : (
-                          filteredInvHistory.map((tx) => (
-                            <tr key={tx.id}>
-                              <td>{tx.date}</td>
-                              <td style={{ fontWeight: 600 }}>{tx.itemName}</td>
-                              <td>
-                                <span className={`badge ${tx.type === 'masuk' ? 'in' : 'out'}`} style={{ gap: '0.2rem' }}>
-                                  {tx.type === 'masuk' ? 'Masuk' : 'Keluar'}
-                                  <span style={{ fontWeight: 700 }}>
-                                    ({tx.amount} {tx.unit})
-                                  </span>
-                                </span>
-                              </td>
-                              <td style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                                {tx.type === 'masuk' ? (tx.donatur || 'Hamba Allah') : (tx.description || '-')}
-                              </td>
-                              <td style={{ textAlign: 'center' }}>
-                                <button
-                                  onClick={() => {
-                                    if (confirm(`Apakah Anda yakin ingin menghapus mutasi barang "${tx.itemName}"?`)) {
-                                      handleDeleteInventory(tx.id);
-                                    }
-                                  }}
-                                  className="btn btn-danger"
-                                  style={{ padding: '0.25rem', minHeight: '32px', minWidth: '32px', borderRadius: '6px', display: 'inline-flex' }}
-                                  title="Hapus Mutasi"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {filteredInvItems.length === 0 ? (
+                            <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>Tidak ada barang.</td></tr>
+                          ) : (
+                            filteredInvItems.map((item) => (
+                              <tr key={item.name}>
+                                <td style={{ fontWeight: 600 }}>{item.name}</td>
+                                <td style={{ color: 'var(--text-secondary)' }}>{item.category}</td>
+                                <td style={{ fontWeight: 800, color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--text-primary)' }}>{item.stock}</td>
+                                <td>{item.unit}</td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  {/* Kartu Mobile */}
+                  <div className="mobile-card-list">
+                    {filteredInvItems.length === 0 ? (
+                      <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>Tidak ada barang.</div>
+                    ) : (
+                      filteredInvItems.map((item) => (
+                        <div key={item.name} className="mobile-data-card">
+                          <div>
+                            <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{item.name}</h4>
+                            <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>{item.category}</span>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <span style={{ fontSize: '1.05rem', fontWeight: 800, color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--primary)' }}>{item.stock}</span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '0.2rem' }}>{item.unit}</span>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
-
-                {/* Tampilan Mobile: Kartu Vertikal */}
-                <div className="mobile-card-list">
-                  {filteredInvHistory.length === 0 ? (
-                    <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
-                      Tidak ada riwayat mutasi barang.
-                    </div>
-                  ) : (
-                    filteredInvHistory.map((tx) => (
-                      <div key={tx.id} className="mobile-data-card" style={{ display: 'block', padding: '0.85rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                          <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{tx.date}</span>
-                          <span className={`badge ${tx.type === 'masuk' ? 'in' : 'out'}`}>
-                            {tx.type === 'masuk' ? 'Barang Masuk' : 'Barang Keluar'}
-                          </span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
-                          <div style={{ flex: 1 }}>
-                            <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{tx.itemName}</h4>
-                            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-                              {tx.type === 'masuk' ? `Donatur: ${tx.donatur || 'Hamba Allah'}` : `Detail: ${tx.description || '-'}`}
-                            </p>
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
-                            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: tx.type === 'masuk' ? 'var(--primary)' : 'var(--danger)' }}>
-                              {tx.type === 'masuk' ? '+' : '-'}{tx.amount} {tx.unit}
-                            </div>
-                            <button
-                              onClick={() => {
-                                if (confirm(`Apakah Anda yakin ingin menghapus mutasi barang "${tx.itemName}"?`)) {
-                                  handleDeleteInventory(tx.id);
-                                }
-                              }}
-                              className="btn btn-danger"
-                              style={{ padding: '0.25rem', minHeight: '32px', minWidth: '32px', borderRadius: '6px', display: 'inline-flex' }}
-                              title="Hapus Mutasi"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
               </div>
-            </div>
-
+            )}
           </div>
         )}
+
+
 
         {activeTab === 'program' && (
           <ProgramManager

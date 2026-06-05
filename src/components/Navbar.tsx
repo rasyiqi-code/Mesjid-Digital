@@ -4,6 +4,7 @@ import { Moon, Wifi, WifiOff, RefreshCw } from 'lucide-react';
 interface NavbarProps {
   isOnline: boolean;
   isSyncing: boolean;
+  syncProgressMsg?: string;
   isSimulatedOffline: boolean;
   queueCount: number;
   onToggleSim: () => void;
@@ -13,6 +14,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   isOnline,
   isSyncing,
+  syncProgressMsg,
   isSimulatedOffline,
   queueCount,
   onToggleSim,
@@ -24,17 +26,33 @@ export const Navbar: React.FC<NavbarProps> = ({
         <Moon className="logo-icon" size={32} />
         <div>
           <h1 className="logo-title">Mesjid Digital</h1>
-          <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textAlign: 'left' }}>
+          <p className="logo-desc">
             Sistem Informasi & Manajemen Mandiri
           </p>
         </div>
       </div>
 
       <div className="conn-panel">
-        {/* Status Koneksi */}
-        <div className={`status-badge ${isOnline ? 'online' : 'offline'}`}>
-          <span className={`status-dot ${isOnline ? 'online' : 'offline'}`}></span>
-          {isOnline ? 'Tersambung (Online)' : 'Menunggu koneksi (Offline)'}
+        {/* Status Koneksi & Progres Sinkronisasi */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem' }}>
+          <div className={`status-badge ${isOnline ? 'online' : 'offline'}`}>
+            <span className={`status-dot ${isOnline ? 'online' : 'offline'}`}></span>
+            {isOnline ? 'Tersambung (Online)' : 'Menunggu koneksi (Offline)'}
+          </div>
+          {isSyncing && syncProgressMsg && (
+            <span style={{ 
+              fontSize: '0.65rem', 
+              color: 'var(--primary)', 
+              fontWeight: 700, 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '0.25rem',
+              textShadow: '0 0 8px rgba(16, 185, 129, 0.2)'
+            }}>
+              <RefreshCw size={10} style={{ animation: 'spin 1.5s linear infinite' }} />
+              {syncProgressMsg}
+            </span>
+          )}
         </div>
 
         {/* Tombol Sinkronisasi Manual (jika ada data antrean dan sedang online) */}
@@ -43,10 +61,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onManualSync}
             disabled={isSyncing}
             className="btn btn-secondary"
-            style={{ padding: '0.35rem 0.75rem', fontSize: '0.775rem', gap: '0.35rem' }}
+            style={{ padding: '0.4rem 0.75rem', fontSize: '0.775rem', gap: '0.35rem', minHeight: '38px' }}
             title="Sinkronkan data sekarang"
           >
-            <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
+            <RefreshCw size={14} style={{ animation: isSyncing ? 'spin 1.5s linear infinite' : 'none' }} />
             Sync ({queueCount})
           </button>
         )}
@@ -55,7 +73,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           onClick={onToggleSim}
           className={`btn ${isSimulatedOffline ? 'btn-accent' : 'btn-secondary'}`}
-          style={{ padding: '0.35rem 0.75rem', fontSize: '0.775rem', gap: '0.35rem' }}
+          style={{ padding: '0.4rem 0.75rem', fontSize: '0.775rem', gap: '0.35rem', minHeight: '38px' }}
           title={isSimulatedOffline ? 'Aktifkan koneksi internet' : 'Simulasikan hilangnya koneksi internet'}
         >
           {isSimulatedOffline ? (

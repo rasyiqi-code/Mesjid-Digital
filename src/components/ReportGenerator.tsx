@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { 
-  getCashTransactions, 
-  getInventoryTransactions, 
-  getInventoryItems
-} from '../utils/storage';
+  getDBCashTransactions, 
+  getDBInventoryTransactions, 
+  getDBInventoryItems
+} from '../utils/db';
 import type { 
   CashTransaction, 
   InventoryTransaction,
   InventoryItem
 } from '../utils/storage';
-import { FileText, Download, Share2, Calendar, Database, Eye } from 'lucide-react';
+import { FileText, Download, Share2, Calendar, Database, Eye, Table } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 
 interface ReportGeneratorProps {
@@ -61,78 +61,82 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
     }).format(value);
   };
 
-  // Logika pembuatan/generasi laporan
-  const handleGenerateReport = () => {
-    setIsGenerated(true);
+  // Logika pembuatan/generasi laporan asinkron menggunakan IndexedDB
+  const handleGenerateReport = async () => {
+    try {
+      if (reportType === 'kas') {
+        const allCash = await getDBCashTransactions();
+        
+        // Filter transaksi kas untuk bulan & tahun terpilih
+        const currentMonthCash = allCash.filter((t) => {
+          const d = new Date(t.date);
+          return d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
+        });
 
-    if (reportType === 'kas') {
-      const allCash = getCashTransactions();
+        // Hitung Saldo Awal (semua transaksi sebelum bulan terpilih)
+        const previousCash = allCash.filter((t) => {
+          const d = new Date(t.date);
+          return d.getFullYear() < selectedYear || 
+                 (d.getFullYear() === selectedYear && d.getMonth() < selectedMonth);
+        });
+
+        let openingBalance = 0;
+        previousCash.forEach((t) => {
+          if (t.type === 'pemasukan') openingBalance += t.amount;
+          else openingBalance -= t.amount;
+        });
+
+        // Hitung total pemasukan & pengeluaran di bulan terpilih
+        let totalIncome = 0;
+        let totalExpense = 0;
+        currentMonthCash.forEach((t) => {
+          if (t.type === 'pemasukan') totalIncome += t.amount;
+          else totalExpense += t.amount;
+        });
+
+        setReportData({
+          cashSummary: {
+            openingBalance,
+            totalIncome,
+            totalExpense,
+            closingBalance: openingBalance + totalIncome - totalExpense,
+            transactions: currentMonthCash,
+          }
+        });
+        showToast('Laporan Kas Bulanan berhasil dimuat.', 'success');
+      } 
       
-      // Filter transaksi kas untuk bulan & tahun terpilih
-      const currentMonthCash = allCash.filter((t) => {
-        const d = new Date(t.date);
-        return d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
-      });
+      else if (reportType === 'stok') {
+        const allInv = await getDBInventoryTransactions();
+        
+        // Filter log transaksi barang untuk bulan & tahun terpilih
+        const currentMonthInv = allInv.filter((t) => {
+          const d = new Date(t.date);
+          return d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
+        });
 
-      // Hitung Saldo Awal (semua transaksi sebelum bulan terpilih)
-      const previousCash = allCash.filter((t) => {
-        const d = new Date(t.date);
-        return d.getFullYear() < selectedYear || 
-               (d.getFullYear() === selectedYear && d.getMonth() < selectedMonth);
-      });
-
-      let openingBalance = 0;
-      previousCash.forEach((t) => {
-        if (t.type === 'pemasukan') openingBalance += t.amount;
-        else openingBalance -= t.amount;
-      });
-
-      // Hitung total pemasukan & pengeluaran di bulan terpilih
-      let totalIncome = 0;
-      let totalExpense = 0;
-      currentMonthCash.forEach((t) => {
-        if (t.type === 'pemasukan') totalIncome += t.amount;
-        else totalExpense += t.amount;
-      });
-
-      setReportData({
-        cashSummary: {
-          openingBalance,
-          totalIncome,
-          totalExpense,
-          closingBalance: openingBalance + totalIncome - totalExpense,
-          transactions: currentMonthCash,
-        }
-      });
-      showToast('Laporan Kas Bulanan berhasil dimuat.', 'success');
-    } 
-    
-    else if (reportType === 'stok') {
-      const allInv = getInventoryTransactions();
+        setReportData({
+          stockSummary: {
+            transactions: currentMonthInv,
+          }
+        });
+        showToast('Laporan Stok Barang berhasil dimuat.', 'success');
+      } 
       
-      // Filter log transaksi barang untuk bulan & tahun terpilih
-      const currentMonthInv = allInv.filter((t) => {
-        const d = new Date(t.date);
-        return d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
-      });
+      else if (reportType === 'inventaris') {
+        const allItems = await getDBInventoryItems();
+        setReportData({
+          inventoryList: {
+            items: allItems,
+          }
+        });
+        showToast('Daftar Inventaris Terkini berhasil dimuat.', 'success');
+      }
 
-      setReportData({
-        stockSummary: {
-          transactions: currentMonthInv,
-        }
-      });
-      showToast('Laporan Stok Barang berhasil dimuat.', 'success');
-    } 
-    
-    else if (reportType === 'inventaris') {
-      // Daftar inventaris bersifat real-time kumulatif
-      const allItems = getInventoryItems();
-      setReportData({
-        inventoryList: {
-          items: allItems,
-        }
-      });
-      showToast('Daftar Inventaris Terkini berhasil dimuat.', 'success');
+      setIsGenerated(true);
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal memuat data laporan dari database.', 'error');
     }
   };
 
@@ -211,7 +215,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
         doc.text('Tidak ada data transaksi pada bulan ini.', 105, yPosition + 10, { align: 'center' });
       } else {
         summary.transactions.forEach((t) => {
-          if (yPosition > 270) {
+          if (yPosition > 260) {
             doc.addPage();
             yPosition = 20;
           }
@@ -255,7 +259,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
         doc.text('Tidak ada transaksi mutasi barang pada bulan ini.', 105, yPosition + 10, { align: 'center' });
       } else {
         summary.transactions.forEach((t) => {
-          if (yPosition > 270) {
+          if (yPosition > 260) {
             doc.addPage();
             yPosition = 20;
           }
@@ -299,7 +303,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
         doc.text('Tidak ada persediaan barang terdaftar di gudang.', 105, yPosition + 10, { align: 'center' });
       } else {
         list.items.forEach((item) => {
-          if (yPosition > 270) {
+          if (yPosition > 260) {
             doc.addPage();
             yPosition = 20;
           }
@@ -313,9 +317,79 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
       }
     }
 
+    // Blok Tanda Tangan Akuntansi / Hukum di bagian bawah PDF
+    yPosition += 25;
+    if (yPosition > 240) {
+      doc.addPage();
+      yPosition = 30;
+    }
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('Mengetahui,', 40, yPosition);
+    doc.text('Dibuat Oleh,', 150, yPosition);
+    
+    yPosition += 22;
+    doc.setFont('helvetica', 'bold');
+    doc.text('___________________', 40, yPosition);
+    doc.text('___________________', 150, yPosition);
+    
+    doc.setFontSize(9);
+    doc.setTextColor(107, 114, 128);
+    doc.text('Ketua DKM Masjid', 40, yPosition + 5);
+    doc.text('Bendahara Masjid', 150, yPosition + 5);
+
     // Unduh PDF
     doc.save(`Laporan_Mesjid_Digital_${reportType}_${selectedMonth + 1}_${selectedYear}.pdf`);
     showToast('Laporan berhasil diekspor sebagai PDF.', 'success');
+  };
+
+  // Pembuatan dan Pengunduhan Berkas CSV (Untuk Spreadsheet Excel/Google Sheets)
+  const handleExportCSV = () => {
+    let csvContent = '\uFEFF'; // Byte Order Mark (BOM) agar Excel mengenali karakter UTF-8
+    let filename = `Laporan_Mesjid_Digital_${reportType}_${selectedMonth + 1}_${selectedYear}.csv`;
+
+    if (reportType === 'kas' && reportData.cashSummary) {
+      const summary = reportData.cashSummary;
+      csvContent += 'Tanggal,Jenis Transaksi,Kategori Kas,Keterangan,Nominal Rupiah\n';
+      csvContent += `,,Saldo Awal Bulan,,${summary.openingBalance}\n`;
+      summary.transactions.forEach((t) => {
+        const desc = t.description ? t.description.replace(/"/g, '""') : '';
+        csvContent += `"${t.date}","${t.type === 'pemasukan' ? 'Masuk' : 'Keluar'}","${t.category}","${desc}","${t.amount}"\n`;
+      });
+      csvContent += `,,Total Pemasukan,,${summary.totalIncome}\n`;
+      csvContent += `,,Total Pengeluaran,,${summary.totalExpense}\n`;
+      csvContent += `,,Saldo Akhir Kas,,${summary.closingBalance}\n`;
+    } 
+    
+    else if (reportType === 'stok' && reportData.stockSummary) {
+      const summary = reportData.stockSummary;
+      csvContent += 'Tanggal,Aktivitas Logistik,Nama Barang,Jumlah,Satuan Takar,Keterangan/Donatur\n';
+      summary.transactions.forEach((t) => {
+        const detail = t.type === 'masuk' ? (t.donatur || 'Hamba Allah') : (t.description || '');
+        const detailClean = detail.replace(/"/g, '""');
+        csvContent += `"${t.date}","${t.type === 'masuk' ? 'Barang Masuk' : 'Barang Keluar'}","${t.itemName}","${t.amount}","${t.unit}","${detailClean}"\n`;
+      });
+    } 
+    
+    else if (reportType === 'inventaris' && reportData.inventoryList) {
+      const list = reportData.inventoryList;
+      filename = `Daftar_Stok_Gudang_Realtime_${Date.now()}.csv`;
+      csvContent += 'Nama Barang,Kategori Logistik,Sisa Stok Tersedia,Satuan Takar\n';
+      list.items.forEach((item) => {
+        csvContent += `"${item.name}","${item.category}","${item.stock}","${item.unit}"\n`;
+      });
+    }
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Laporan berhasil diekspor sebagai CSV.', 'success');
   };
 
   // Membagikan Laporan lewat WhatsApp Web
@@ -476,25 +550,36 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
             <div>
               <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Pratinjau Hasil Laporan</h4>
               <p style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                Tinjau isi dokumen sebelum dibagikan ke jemaah
+                Tinjau isi dokumen sebelum diekspor atau dibagikan
               </p>
             </div>
             
             {/* Tombol Bagikan / Expor */}
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
               <button
                 onClick={handleExportPDF}
                 className="btn btn-primary"
-                style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', gap: '0.4rem' }}
+                style={{ padding: '0.5rem 0.85rem', fontSize: '0.8rem', gap: '0.4rem' }}
+                title="Ekspor Laporan ke format PDF"
               >
                 <Download size={14} />
-                Unduh PDF
+                Ekspor PDF
+              </button>
+              
+              <button
+                onClick={handleExportCSV}
+                className="btn btn-secondary"
+                style={{ padding: '0.5rem 0.85rem', fontSize: '0.8rem', gap: '0.4rem' }}
+                title="Ekspor data ke CSV untuk Excel/Google Sheets"
+              >
+                <Table size={14} />
+                Ekspor CSV
               </button>
               
               <button
                 onClick={handleShareWhatsApp}
                 className="btn btn-secondary"
-                style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', gap: '0.4rem', borderColor: '#25D366', color: '#25D366' }}
+                style={{ padding: '0.5rem 0.85rem', fontSize: '0.8rem', gap: '0.4rem', borderColor: '#25D366', color: '#25D366' }}
               >
                 <Share2 size={14} />
                 Bagikan ke WA

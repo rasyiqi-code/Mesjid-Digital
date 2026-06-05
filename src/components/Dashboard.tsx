@@ -1,12 +1,9 @@
 import React from 'react';
-import { 
-  getCashBalance, 
-  getInventoryItems, 
-  getSyncQueue
-} from '../utils/storage';
 import type { 
   CashTransaction, 
-  InventoryTransaction 
+  InventoryTransaction,
+  SyncQueueItem,
+  InventoryItem 
 } from '../utils/storage';
 import { 
   TrendingUp, 
@@ -19,22 +16,18 @@ import {
 
 interface DashboardProps {
   onNavigateToTab: (tab: string) => void;
-  // Trigger update state dari luar
-  updateTrigger: number;
+  cashSummary: { totalIn: number; totalOut: number; balance: number };
+  queue: SyncQueueItem[];
+  criticalItems: InventoryItem[];
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToTab }) => {
-  // Ambil saldo kas
-  const { totalIn, totalOut, balance } = getCashBalance();
-
-  // Ambil barang inventaris
-  const items = getInventoryItems();
-
-  // Ambil data antrean offline
-  const queue = getSyncQueue();
-
-  // Hitung barang dengan stok kritis (kurang dari 10 kg/liter/pcs)
-  const criticalItems = items.filter(item => item.stock < 10);
+export const Dashboard: React.FC<DashboardProps> = ({ 
+  onNavigateToTab, 
+  cashSummary,
+  queue,
+  criticalItems
+}) => {
+  const { totalIn, totalOut, balance } = cashSummary;
 
   // Format rupiah
   const formatRupiah = (value: number) => {

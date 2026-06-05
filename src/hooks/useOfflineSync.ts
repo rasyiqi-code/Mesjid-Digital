@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { 
-  getSyncQueue, 
-  removeFromSyncQueue, 
-  addCashTransactionDirectly, 
-  addInventoryTransactionDirectly
-} from '../utils/storage';
-import type {
-  CashTransaction,
-  InventoryTransaction,
-  SyncQueueItem
+  getDBSyncQueue, 
+  deleteDBSyncQueue, 
+  addDBCashTransaction, 
+  addDBInventoryTransaction
+} from '../utils/db';
+import type { 
+  CashTransaction, 
+  InventoryTransaction, 
+  SyncQueueItem 
 } from '../utils/storage';
 import confetti from 'canvas-confetti';
 
@@ -33,6 +33,9 @@ export const useOfflineSync = (onDataUpdated?: () => void) => {
   // Status sinkronisasi sedang berjalan
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   
+  // Status progres teks sinkronisasi
+  const [syncProgressMsg, setSyncProgressMsg] = useState<string>('');
+  
   // Jumlah antrean saat ini
   const [queueCount, setQueueCount] = useState<number>(0);
   
@@ -42,11 +45,26 @@ export const useOfflineSync = (onDataUpdated?: () => void) => {
   // Daftar notifikasi melayang (toast)
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
+  // Haptic feedback getar perangkat (jika didukung dan berjalan di mobile WebView/Android)
+  const triggerVibration = useCallback((pattern: number | number[]) => {
+    if ('vibrate' in navigator) {
+      try {
+        navigator.vibrate(pattern);
+      } catch (e) {
+        console.warn('Haptic feedback tidak didukung pada browser/perangkat ini:', e);
+      }
+    }
+  }, []);
+
   // Mengubah jumlah antrean secara periodik atau saat dipanggil
-  const updateQueueCount = useCallback(() => {
-    const queue = getSyncQueue();
-    setQueueCount(queue.length);
-    setActiveQueue(queue);
+  const updateQueueCount = useCallback(async () => {
+    try {
+      const queue = await getDBSyncQueue();
+      setQueueCount(queue.length);
+      setActiveQueue(queue);
+    } catch (err) {
+      console.error('Gagal mengambil antrean DB:', err);
+    }
   }, []);
 
   // Menambahkan toast baru
@@ -67,74 +85,92 @@ export const useOfflineSync = (onDataUpdated?: () => void) => {
 
   // Fungsi sinkronisasi antrean ke data utama
   const performSync = useCallback(async () => {
-    const queue = getSyncQueue();
-    if (queue.length === 0 || isSyncing) return;
-
-    setIsSyncing(true);
-    showToast(`Memulai sinkronisasi ${queue.length} data tertunda...`, 'info');
-
-    // Beri jeda 1.5 detik agar animasi visual sinkronisasi terlihat premium
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
     try {
-      // Proses setiap data dalam antrean secara berurutan
-      // Pada aplikasi nyata, di sini kita mengirimkan POST request ke backend server API.
-      // Di sini kita mensimulasikan penyimpanan ke data utama lokal sebagai server mockup.
-      for (const item of queue) {
+      const queue = await getDBSyncQueue();
+      if (queue.length === 0 || isSyncing) return;
+
+      setIsSyncing(true);
+      triggerVibration([100, 50, 100]); // Getaran awal tanda mulai sinkronisasi
+      showToast(`Memulai sinkronisasi ${queue.length} data tertunda...`, 'info');
+
+      // Proses setiap data dalam antrean secara berurutan dengan jeda visual
+      for (let i = 0; i < queue.length; i++) {
+        const item = queue[i];
+        setSyncProgressMsg(`Menyinkronkan data ${i + 1} dari ${queue.length}...`);
+        
+        // Beri jeda 800ms per baris agar animasi progres step-by-step terlihat memukau
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
         if (item.type === 'cash') {
-          addCashTransactionDirectly(item.data as CashTransaction);
+          await addDBCashTransaction(item.data as CashTransaction);
         } else if (item.type === 'inventory') {
-          addInventoryTransactionDirectly(item.data as InventoryTransaction);
+          await addDBInventoryTransaction(item.data as InventoryTransaction);
         }
-        // Hapus dari antrean lokal
-        removeFromSyncQueue(item.id);
+        
+        // Hapus dari antrean lokal IndexedDB setelah berhasil
+        await deleteDBSyncQueue(item.id);
+        
+        // Getaran halus tiap berhasil mengirim satu item
+        triggerVibration(40);
+        
+        // Trigger UI update secara bertahap
+        if (onDataUpdated) {
+          onDataUpdated();
+        }
       }
 
-      updateQueueCount();
+      await updateQueueCount();
       setIsSyncing(false);
+      setSyncProgressMsg('');
+      
+      // Getar panjang ganda tanda sukses besar
+      triggerVibration([200, 100, 200]);
       showToast('Sinkronisasi selesai! Semua data tersimpan ke server.', 'success');
 
       // Efek kembang api selebrasi keberhasilan sinkronisasi
       confetti({
-        particleCount: 80,
-        spread: 60,
+        particleCount: 100,
+        spread: 70,
         origin: { y: 0.8 },
-        colors: ['#10B981', '#34D399', '#F59E0B', '#10B981'],
+        colors: ['#10B981', '#34D399', '#F59E0B', '#3B82F6'],
       });
 
-      // Panggil callback agar halaman memperbarui datanya
       if (onDataUpdated) {
         onDataUpdated();
       }
     } catch (error) {
       console.error('Sinkronisasi gagal:', error);
       setIsSyncing(false);
-      showToast('Gagal menyinkronkan beberapa data. Akan dicoba lagi nanti.', 'error');
+      setSyncProgressMsg('');
+      triggerVibration([300, 100, 100]); // Getar peringatan error
+      showToast('Gagal menyinkronkan beberapa data. Dicoba lagi nanti.', 'error');
     }
-  }, [isSyncing, updateQueueCount, showToast, onDataUpdated]);
+  }, [isSyncing, updateQueueCount, showToast, onDataUpdated, triggerVibration]);
 
   // Listener untuk status internet bawaan browser
   useEffect(() => {
     const handleOnline = () => {
       setIsBrowserOnline(true);
-      showToast('Koneksi internet terdeteksi.', 'info');
+      showToast('Koneksi internet terdeteksi aktif.', 'info');
+      triggerVibration(100);
     };
     const handleOffline = () => {
       setIsBrowserOnline(false);
       showToast('Koneksi internet terputus.', 'error');
+      triggerVibration([150, 50, 150]);
     };
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     
-    // Hitung antrean di awal
+    // Hitung antrean di awal secara asinkron
     updateQueueCount();
 
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [showToast, updateQueueCount]);
+  }, [showToast, updateQueueCount, triggerVibration]);
 
   // Menjalankan sinkronisasi secara otomatis saat status koneksi pulih menjadi Online
   useEffect(() => {
@@ -149,23 +185,27 @@ export const useOfflineSync = (onDataUpdated?: () => void) => {
     setIsSimulatedOffline(nextSimState);
     localStorage.setItem('mesjid_digital_simulated_offline', String(nextSimState));
     
+    // Haptic getar tombol ditekan
+    triggerVibration(50);
+    
     if (nextSimState) {
-      showToast('Mode offline disimulasikan. Transaksi akan masuk antrean lokal.', 'info');
+      showToast('Mode offline disimulasikan. Transaksi masuk antrean lokal.', 'info');
     } else {
       showToast('Mode simulasi offline dimatikan.', 'info');
-      // Update browser online state to make sure
       setIsBrowserOnline(navigator.onLine);
     }
-  }, [isSimulatedOffline, showToast]);
+  }, [isSimulatedOffline, showToast, triggerVibration]);
 
   return {
     isOnline,
     isSyncing,
+    syncProgressMsg,
     queueCount,
     activeQueue,
     isSimulatedOffline,
     toasts,
     removeToast,
+    toggleVibration: () => triggerVibration(50),
     toggleConnectionSim,
     updateQueueCount,
     showToast,

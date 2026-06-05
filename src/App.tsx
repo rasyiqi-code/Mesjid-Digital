@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './components/Navbar';
 import { Dashboard } from './components/Dashboard';
 import { CashTransactionForm } from './components/CashTransactionForm';
@@ -6,16 +6,20 @@ import { InventoryForm } from './components/InventoryForm';
 import { ReportGenerator } from './components/ReportGenerator';
 import { useOfflineSync } from './hooks/useOfflineSync';
 import { 
-  seedInitialData, 
-  addCashTransactionDirectly, 
-  addInventoryTransactionDirectly,
-  addToSyncQueue,
-  getInventoryTransactions,
-  getInventoryItems
-} from './utils/storage';
+  initDB,
+  seedDBInitialData, 
+  getDBCashBalance,
+  getDBInventoryTransactions,
+  getDBInventoryItems,
+  getDBSyncQueue,
+  addDBCashTransaction, 
+  addDBInventoryTransaction,
+  addDBSyncQueue
+} from './utils/db';
 import type { 
   CashTransaction, 
   InventoryTransaction,
+  SyncQueueItem,
   InventoryItem
 } from './utils/storage';
 import { 
@@ -32,22 +36,68 @@ import {
 } from 'lucide-react';
 
 function App() {
-  // 1. Jalankan inisialisasi seeding data awal jika LocalStorage masih kosong
-  useEffect(() => {
-    seedInitialData();
-  }, []);
-
   // State pemicu pembaruan UI lintas komponen
   const [updateTrigger, setUpdateTrigger] = useState<number>(0);
 
-  const handleDataUpdated = () => {
+  // State data keuangan & logistik dari IndexedDB
+  const [cashSummary, setCashSummary] = useState<{ totalIn: number; totalOut: number; balance: number }>({
+    totalIn: 0,
+    totalOut: 0,
+    balance: 0
+  });
+  const [queueList, setQueueList] = useState<SyncQueueItem[]>([]);
+  const [invItems, setInvItems] = useState<InventoryItem[]>([]);
+  const [invHistory, setInvHistory] = useState<InventoryTransaction[]>([]);
+  const [criticalItems, setCriticalItems] = useState<InventoryItem[]>([]);
+
+  // Mengambil seluruh data asinkron dari IndexedDB secara terpusat
+  const loadAllData = useCallback(async () => {
+    try {
+      const balanceData = await getDBCashBalance();
+      const currentQueue = await getDBSyncQueue();
+      const allItems = await getDBInventoryItems();
+      const allTx = await getDBInventoryTransactions();
+
+      setCashSummary(balanceData);
+      setQueueList(currentQueue);
+      setInvItems(allItems);
+      setInvHistory(allTx);
+      
+      // Barang dengan stok di bawah 10 unit dianggap kritis
+      setCriticalItems(allItems.filter(item => item.stock < 10));
+    } catch (err) {
+      console.error('Gagal memuat data dari IndexedDB:', err);
+    }
+  }, []);
+
+  // Inisialisasi Database IndexedDB & Seeding Data Awal
+  useEffect(() => {
+    const startup = async () => {
+      try {
+        await initDB();
+        await seedDBInitialData();
+        await loadAllData();
+      } catch (err) {
+        console.error('Proses inisialisasi aplikasi gagal:', err);
+      }
+    };
+    startup();
+  }, [loadAllData]);
+
+  // Pantau updateTrigger untuk me-reload data dari DB
+  useEffect(() => {
+    loadAllData();
+  }, [updateTrigger, loadAllData]);
+
+  const handleDataUpdated = useCallback(() => {
     setUpdateTrigger((prev) => prev + 1);
-  };
+  }, []);
 
   // 2. Hubungkan hook sinkronisasi offline-online
   const {
     isOnline,
     isSyncing,
+    syncProgressMsg,
     queueCount,
     isSimulatedOffline,
     toasts,
@@ -62,17 +112,9 @@ function App() {
 
   // State untuk pencarian di tab Inventaris
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [invItems, setInvItems] = useState<InventoryItem[]>([]);
-  const [invHistory, setInvHistory] = useState<InventoryTransaction[]>([]);
 
-  // Update data inventaris saat tab aktif atau updateTrigger berubah
-  useEffect(() => {
-    setInvItems(getInventoryItems());
-    setInvHistory(getInventoryTransactions());
-  }, [updateTrigger, activeTab]);
-
-  // 4. Handler penyimpanan Kas Baru
-  const handleSaveCash = (data: Omit<CashTransaction, 'id' | 'date'>) => {
+  // 4. Handler penyimpanan Kas Baru asinkron ke IndexedDB
+  const handleSaveCash = async (data: Omit<CashTransaction, 'id' | 'date'>) => {
     const today = new Date().toISOString().split('T')[0];
     const newTx: CashTransaction = {
       ...data,
@@ -80,21 +122,23 @@ function App() {
       date: today,
     };
 
-    if (isOnline) {
-      // Jika online, simpan ke database utama secara instan
-      addCashTransactionDirectly(newTx);
-      showToast('Transaksi Kas berhasil disimpan ke server.', 'success');
+    try {
+      if (isOnline) {
+        await addDBCashTransaction(newTx);
+        showToast('Transaksi Kas berhasil disimpan ke server.', 'success');
+      } else {
+        await addDBSyncQueue('cash', newTx);
+        showToast('Offline: Transaksi Kas disimpan sementara di lokal.', 'info');
+      }
       handleDataUpdated();
-    } else {
-      // Jika offline, masukkan ke antrean lokal
-      addToSyncQueue('cash', newTx);
-      showToast('Offline: Transaksi Kas disimpan sementara di lokal.', 'info');
-      handleDataUpdated();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menyimpan transaksi kas.', 'error');
     }
   };
 
-  // 5. Handler penyimpanan Barang Baru
-  const handleSaveInventory = (data: Omit<InventoryTransaction, 'id' | 'date'>) => {
+  // 5. Handler penyimpanan Barang Baru asinkron ke IndexedDB
+  const handleSaveInventory = async (data: Omit<InventoryTransaction, 'id' | 'date'>) => {
     const today = new Date().toISOString().split('T')[0];
     const newTx: InventoryTransaction = {
       ...data,
@@ -102,14 +146,18 @@ function App() {
       date: today,
     };
 
-    if (isOnline) {
-      addInventoryTransactionDirectly(newTx);
-      showToast('Mutasi Barang berhasil disimpan ke server.', 'success');
+    try {
+      if (isOnline) {
+        await addDBInventoryTransaction(newTx);
+        showToast('Mutasi Barang berhasil disimpan ke server.', 'success');
+      } else {
+        await addDBSyncQueue('inventory', newTx);
+        showToast('Offline: Mutasi Barang disimpan sementara di lokal.', 'info');
+      }
       handleDataUpdated();
-    } else {
-      addToSyncQueue('inventory', newTx);
-      showToast('Offline: Mutasi Barang disimpan sementara di lokal.', 'info');
-      handleDataUpdated();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menyimpan transaksi barang.', 'error');
     }
   };
 
@@ -122,13 +170,13 @@ function App() {
     tx.itemName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-
   return (
     <div className="app-container">
       {/* Navigasi Atas & Indikator Koneksi */}
       <Navbar
         isOnline={isOnline}
         isSyncing={isSyncing}
+        syncProgressMsg={syncProgressMsg}
         isSimulatedOffline={isSimulatedOffline}
         queueCount={queueCount}
         onToggleSim={toggleConnectionSim}
@@ -179,7 +227,9 @@ function App() {
         {activeTab === 'dashboard' && (
           <Dashboard 
             onNavigateToTab={(tab) => setActiveTab(tab)} 
-            updateTrigger={updateTrigger} 
+            cashSummary={cashSummary}
+            queue={queueList}
+            criticalItems={criticalItems}
           />
         )}
 

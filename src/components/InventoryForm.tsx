@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Save, PlusCircle, MinusCircle } from 'lucide-react';
 import { 
-  getInventoryItems, 
-  getItemStock
-} from '../utils/storage';
+  getDBInventoryItems, 
+  getDBItemStock
+} from '../utils/db';
 import type { InventoryTransaction } from '../utils/storage';
 
 interface InventoryFormProps {
@@ -33,10 +33,15 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [currentStock, setCurrentStock] = useState<number>(0);
 
-  // Ambil daftar barang yang sudah pernah ada untuk saran pengisian
+  // Ambil daftar barang yang sudah pernah ada untuk saran pengisian (IndexedDB Asinkron)
   useEffect(() => {
-    const items = getInventoryItems();
-    setExistingItems(items.map(i => ({ name: i.name, unit: i.unit, category: i.category })));
+    getDBInventoryItems()
+      .then((items) => {
+        setExistingItems(items.map(i => ({ name: i.name, unit: i.unit, category: i.category })));
+      })
+      .catch((err) => {
+        console.error('Gagal mengambil daftar barang inventaris:', err);
+      });
   }, [updateTrigger, type]);
 
   // Pantau perubahan nama barang untuk autocomplete dan pengecekan stok
@@ -49,9 +54,14 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
         .map(item => item.name);
       setFilteredSuggestions(filtered);
 
-      // Cek sisa stok saat ini
-      const stock = getItemStock(itemName);
-      setCurrentStock(stock);
+      // Cek sisa stok saat ini secara asinkron dari IndexedDB
+      getDBItemStock(itemName)
+        .then((stock) => {
+          setCurrentStock(stock);
+        })
+        .catch(() => {
+          setCurrentStock(0);
+        });
     } else {
       setFilteredSuggestions([]);
       setCurrentStock(0);
@@ -70,30 +80,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const amt = Number(amount);
-    const trimmedName = itemName.trim();
-
-    if (!trimmedName) {
-      showToast('Harap isi nama barang!', 'error');
-      return;
-    }
-    if (!amt || amt <= 0) {
-      showToast('Harap masukkan jumlah barang yang valid!', 'error');
-      return;
-    }
-
-    // Validasi stok jika barang keluar
-    if (type === 'keluar') {
-      const stock = getItemStock(trimmedName);
-      if (amt > stock) {
-        showToast(`Stok ${trimmedName} kurang! Stok saat ini: ${stock} ${unit}. Transaksi dibatalkan.`, 'error');
-        return;
-      }
-    }
-
+  const executeSave = (trimmedName: string, amt: number) => {
     onSave({
       type,
       itemName: trimmedName,
@@ -110,7 +97,40 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
     setDonatur('');
     setDescription('');
     setCurrentStock(0);
-    showToast('Pencatatan barang berhasil.', 'success');
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const amt = Number(amount);
+    const trimmedName = itemName.trim();
+
+    if (!trimmedName) {
+      showToast('Harap isi nama barang!', 'error');
+      return;
+    }
+    if (!amt || amt <= 0) {
+      showToast('Harap masukkan jumlah barang yang valid!', 'error');
+      return;
+    }
+
+    // Validasi stok asinkron jika barang keluar
+    if (type === 'keluar') {
+      getDBItemStock(trimmedName)
+        .then((stock) => {
+          if (amt > stock) {
+            showToast(`Stok ${trimmedName} kurang! Stok saat ini: ${stock} ${unit}. Transaksi dibatalkan.`, 'error');
+          } else {
+            executeSave(trimmedName, amt);
+          }
+        })
+        .catch((err) => {
+          console.error('Error mengecek stok:', err);
+          showToast('Sistem gagal memverifikasi ketersediaan stok.', 'error');
+        });
+    } else {
+      executeSave(trimmedName, amt);
+    }
   };
 
   return (

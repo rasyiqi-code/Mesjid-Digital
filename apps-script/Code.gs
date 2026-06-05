@@ -42,7 +42,12 @@ const HEADERS = {
 /**
  * Inisialisasi Spreadsheet dan folder Drive.
  * Jalankan fungsi ini dari menu Run → setupSpreadsheet() sebelum deploy.
+ * Token keamanan akan otomatis diset ke nilai DEFAULT_TOKEN di bawah.
  */
+
+/** Token keamanan — ganti jika ingin menggunakan token berbeda */
+const DEFAULT_TOKEN = 'masjid-muttaqin-2026';
+
 function setupSpreadsheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const props = PropertiesService.getScriptProperties();
@@ -78,8 +83,12 @@ function setupSpreadsheet() {
   const folder = existing.hasNext() ? existing.next() : DriveApp.createFolder(folderName);
   props.setProperty(PROP.FOLDER_ID, folder.getId());
 
-  return `✅ Setup selesai!\n  Spreadsheet: ${ss.getUrl()}\n  Folder Drive: https://drive.google.com/drive/folders/${folder.getId()}`;
+  // Set token keamanan otomatis
+  props.setProperty(PROP.TOKEN, DEFAULT_TOKEN);
+
+  return `✅ Setup selesai!\n  Spreadsheet: ${ss.getUrl()}\n  Folder Drive: https://drive.google.com/drive/folders/${folder.getId()}\n  Token: ${DEFAULT_TOKEN}`;
 }
+
 
 /**
  * Set token keamanan.

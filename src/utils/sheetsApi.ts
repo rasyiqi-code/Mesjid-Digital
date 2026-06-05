@@ -54,9 +54,11 @@ export const validateConfig = (config: SheetsConfig): string | null => {
  * CATATAN: Apps Script Web App dengan "Anyone" akses otomatis menangani preflight.
  */
 const postToScript = async (config: SheetsConfig, body: object): Promise<unknown> => {
+  // Gunakan 'text/plain' bukan 'application/json' untuk menghindari CORS preflight
+  // yang diblokir Google Apps Script. Body tetap JSON string, hanya Content-Type berbeda.
   const res = await fetch(config.url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ token: config.token, ...body }),
   });
   if (!res.ok) {

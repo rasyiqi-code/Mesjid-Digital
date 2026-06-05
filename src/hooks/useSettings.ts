@@ -16,14 +16,16 @@ export interface AppSettings {
 
 // Nilai default pengaturan jika belum pernah dikonfigurasi
 const DEFAULT_SETTINGS: AppSettings = {
-  mosqueName: 'Masjid Digital',
-  dkmName: 'DKM Masjid',
+  mosqueName: 'Masjid Muttaqin',
+  dkmName: 'DKM Masjid Muttaqin',
   contactNumber: '',
   criticalStockThreshold: 10,
-  appsScriptUrl: '',
-  appsScriptToken: '',
+  // Integrasi Google — sudah dikonfigurasi untuk Masjid Muttaqin
+  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzHs36-arIW9L0ouFMyaAAG6_HJRMMm10ucEb0BNiuUw00Fgg0sPj6AbS84xl61K-zv/exec',
+  appsScriptToken: 'masjid-muttaqin-2026',
   lastSyncedAt: null,
 };
+
 
 // Muat pengaturan dari localStorage, fallback ke nilai default
 const loadSettings = (): AppSettings => {

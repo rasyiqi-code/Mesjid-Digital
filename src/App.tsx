@@ -100,6 +100,32 @@ function App() {
     return false;
   };
 
+  // Handler reset kata sandi admin dengan token Google Apps Script sebagai pembuktian kepemilikan
+  const handleResetAdminPassword = (token: string): { ok: boolean; message: string } => {
+    if (!settings.appsScriptToken) {
+      return {
+        ok: false,
+        message: 'Integrasi Google Sheets belum dikonfigurasi pada aplikasi ini. Kata sandi default Anda masih "admin123".'
+      };
+    }
+
+    if (token === settings.appsScriptToken) {
+      saveSettings({
+        ...settings,
+        adminPassword: 'admin123'
+      });
+      return {
+        ok: true,
+        message: 'Verifikasi kepemilikan sukses! Kata sandi admin Anda telah direset kembali menjadi: "admin123". Silakan login menggunakan sandi tersebut dan ubah kembali kata sandi Anda demi keamanan.'
+      };
+    }
+
+    return {
+      ok: false,
+      message: 'Token Keamanan Google Apps Script tidak cocok! Silakan periksa kembali token yang tertera pada editor script Google Drive Anda.'
+    };
+  };
+
   // Handler logout admin
   const handleLogoutAdmin = () => {
     setIsAdmin(false);
@@ -637,7 +663,7 @@ function App() {
                 showToast={showToast}
               />
             ) : (
-              <AdminLoginForm onLogin={handleLoginAdmin} />
+              <AdminLoginForm onLogin={handleLoginAdmin} onResetPassword={handleResetAdminPassword} />
             )
           )}
 

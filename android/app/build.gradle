@@ -3,6 +3,17 @@ apply plugin: 'com.android.application'
 android {
     namespace = "com.mesjiddigital.app"
     compileSdk = rootProject.ext.compileSdkVersion
+
+    // Konfigurasi tanda tangan digital (signing) untuk versi rilis
+    signingConfigs {
+        release {
+            storeFile file("release.keystore")
+            storePassword "mesjiddigital123"
+            keyAlias "mesjid-digital-key"
+            keyPassword "mesjiddigital123"
+        }
+    }
+
     defaultConfig {
         applicationId "com.mesjiddigital.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -20,6 +31,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Gunakan konfigurasi signing rilis yang telah dibuat di atas
+            signingConfig signingConfigs.release
         }
     }
 }

@@ -74,6 +74,8 @@ function App() {
   const [barangSubTab, setBarangSubTab] = useState<'catat' | 'stok'>('catat');
   // State untuk meluncurkan drawer formulir transaksi kas
   const [isCashDrawerOpen, setIsCashDrawerOpen] = useState<boolean>(false);
+  // State untuk meluncurkan drawer formulir mutasi barang
+  const [isInventoryDrawerOpen, setIsInventoryDrawerOpen] = useState<boolean>(false);
 
   // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
   const { settings, saveSettings, resetSettings, updateLastSynced } = useSettings();
@@ -439,14 +441,14 @@ function App() {
 
           {activeTab === 'catat_barang' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              {/* Sub-tab: Catat vs Stok */}
+              {/* Sub-tab: Mutasi vs Stok */}
               <div style={{ display: 'flex', gap: '0.35rem', background: 'rgba(255,255,255,0.02)', padding: '0.25rem', borderRadius: '10px', maxWidth: '300px', margin: '0 auto', width: '100%', border: '1px solid var(--border-subtle)' }}>
                 <button
                   onClick={() => setBarangSubTab('catat')}
                   className={`btn ${barangSubTab === 'catat' ? 'btn-primary' : 'btn-secondary'}`}
                   style={{ flex: 1, padding: '0.45rem', fontSize: '0.8rem', borderRadius: '6px', minHeight: '32px' }}
                 >
-                  <PackageCheck size={14} /> Catat
+                  <PackageCheck size={14} /> Mutasi
                 </button>
                 <button
                   onClick={() => setBarangSubTab('stok')}
@@ -457,15 +459,27 @@ function App() {
                 </button>
               </div>
 
-              {/* Sub-tab Catat: Form input + riwayat mutasi */}
+              {/* Sub-tab Mutasi: Riwayat mutasi barang saja */}
               {barangSubTab === 'catat' && (
-                <div className="dashboard-details-grid">
-                  <InventoryForm
-                    isOnline={isOnline}
-                    onSave={handleSaveInventory}
-                    showToast={showToast}
-                    updateTrigger={updateTrigger}
-                  />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {/* Header Riwayat Mutasi & Tombol Aksi */}
+                  <div className="glass-card flex-mobile-col" style={{ padding: '0.75rem 1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Riwayat Mutasi Logistik</h3>
+                      <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                        Daftar barang masuk dan keluar di gudang masjid
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setIsInventoryDrawerOpen(true)}
+                      className="btn btn-primary"
+                      style={{ gap: '0.35rem', padding: '0.45rem 0.85rem', fontSize: '0.8rem', minHeight: '34px', borderRadius: '6px' }}
+                    >
+                      <PlusCircle size={15} />
+                      Catat Mutasi
+                    </button>
+                  </div>
+
                   <div className="glass-card">
                     <InventoryHistory
                       transactions={invHistory}
@@ -628,6 +642,34 @@ function App() {
             }}
             showToast={showToast}
             sheetsConfig={settings.appsScriptUrl ? { url: settings.appsScriptUrl, token: settings.appsScriptToken } : undefined}
+          />
+        </div>
+      </div>
+
+      {/* Drawer Formulir Logistik Barang */}
+      {isInventoryDrawerOpen && (
+        <div className="drawer-overlay" onClick={() => setIsInventoryDrawerOpen(false)} />
+      )}
+      <div className={`drawer ${isInventoryDrawerOpen ? 'open' : ''}`}>
+        <div className="drawer-header">
+          <h3 className="drawer-title">Catat Mutasi Barang</h3>
+          <button 
+            onClick={() => setIsInventoryDrawerOpen(false)} 
+            className="drawer-close"
+            title="Tutup panel"
+          >
+            <X size={16} />
+          </button>
+        </div>
+        <div className="drawer-body">
+          <InventoryForm
+            isOnline={isOnline}
+            onSave={async (data) => {
+              await handleSaveInventory(data);
+              setIsInventoryDrawerOpen(false); // Otomatis tutup drawer setelah berhasil menyimpan
+            }}
+            showToast={showToast}
+            updateTrigger={updateTrigger}
           />
         </div>
       </div>

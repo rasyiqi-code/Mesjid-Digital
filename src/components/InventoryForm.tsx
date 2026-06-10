@@ -135,32 +135,32 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 
   return (
     <div className="glass-card" style={{ maxWidth: '650px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Pencatatan Barang (Gudang)</h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.85rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.45rem' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 800 }}>Logistik Barang</h2>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
         
         {/* Toggle Barang Masuk / Keluar */}
-        <div className="form-group">
-          <label className="form-label">Jenis Logistik Barang</label>
+        <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+          <label className="form-label">Jenis Logistik</label>
           <div className="form-toggle-group">
             <button
               type="button"
               onClick={() => { setType('masuk'); }}
               className={`btn ${type === 'masuk' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ flex: 1, gap: '0.4rem', padding: '0.65rem' }}
+              style={{ flex: 1, gap: '0.3rem', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem' }}
             >
-              <PlusCircle size={18} />
+              <PlusCircle size={15} />
               Barang Masuk
             </button>
             <button
               type="button"
               onClick={() => { setType('keluar'); }}
               className={`btn ${type === 'keluar' ? 'btn-danger' : 'btn-secondary'}`}
-              style={{ flex: 1, gap: '0.4rem', padding: '0.65rem' }}
+              style={{ flex: 1, gap: '0.3rem', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem' }}
             >
-              <MinusCircle size={18} />
+              <MinusCircle size={15} />
               Barang Keluar
             </button>
           </div>
@@ -179,18 +179,20 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
             }}
             onFocus={() => setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            placeholder="Tulis nama barang, misal: Beras, Minyak..."
+            placeholder="Ketik nama barang..."
             className="form-input"
+            style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
             required
             autoComplete="off"
           />
           {showSuggestions && filteredSuggestions.length > 0 && (
-            <ul className="suggestions-list">
+            <ul className="suggestions-list" style={{ marginTop: '0.1rem' }}>
               {filteredSuggestions.map((suggestion) => (
                 <li
                   key={suggestion}
                   onMouseDown={() => handleSuggestionClick(suggestion)}
                   className="suggestion-item"
+                  style={{ padding: '0.45rem 0.65rem', fontSize: '0.775rem' }}
                 >
                   {suggestion}
                 </li>
@@ -198,9 +200,9 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
             </ul>
           )}
           
-          {/* Tampilan Sisa Stok khusus untuk Barang Keluar */}
+          {/* Tampilan Sisa Stok */}
           {itemName.trim() && (
-            <div style={{ marginTop: '0.35rem', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ marginTop: '0.25rem', fontSize: '0.725rem', display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Stok Saat Ini:</span>
               <span style={{ fontWeight: 700, color: currentStock > 0 ? 'var(--primary)' : 'var(--danger)' }}>
                 {currentStock} {unit}
@@ -212,7 +214,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
         {/* Baris Input Jumlah & Satuan */}
         <div className="form-grid-2">
           <div className="form-group">
-            <label className="form-label" htmlFor="inv-amount">Jumlah Barang</label>
+            <label className="form-label" htmlFor="inv-amount">Jumlah</label>
             <input
               id="inv-amount"
               type="number"
@@ -220,18 +222,20 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
               onChange={(e) => setAmount(e.target.value ? Number(e.target.value) : '')}
               placeholder="0"
               className="form-input"
+              style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
               min="1"
               required
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="inv-unit">Satuan Barang</label>
+            <label className="form-label" htmlFor="inv-unit">Satuan</label>
             <select
               id="inv-unit"
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
               className="form-select"
+              style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
               required
             >
               <option value="Kg">Kg (Kilogram)</option>
@@ -247,30 +251,32 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
         {type === 'masuk' && (
           <div className="form-grid-2">
             <div className="form-group">
-              <label className="form-label" htmlFor="inv-donatur">Nama Donatur / Sumber</label>
+              <label className="form-label" htmlFor="inv-donatur">Donatur / Sumber</label>
               <input
                 id="inv-donatur"
                 type="text"
                 value={donatur}
                 onChange={(e) => setDonatur(e.target.value)}
-                placeholder="Bpk/Ibu/Hamba Allah..."
+                placeholder="Nama donatur..."
                 className="form-input"
+                style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="inv-category">Kategori Logistik</label>
+              <label className="form-label" htmlFor="inv-category">Kategori</label>
               <select
                 id="inv-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="form-select"
+                style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
               >
-                <option value="Bahan Pokok">Bahan Pokok (Sembako)</option>
+                <option value="Bahan Pokok">Bahan Pokok</option>
                 <option value="Sarana Ibadah">Sarana Ibadah</option>
-                <option value="Kebersihan">Alat & Bahan Kebersihan</option>
-                <option value="Operasional">Operasional Kantor</option>
-                <option value="Habis Pakai">Barang Habis Pakai</option>
+                <option value="Kebersihan">Kebersihan</option>
+                <option value="Operasional">Operasional</option>
+                <option value="Habis Pakai">Habis Pakai</option>
               </select>
             </div>
           </div>
@@ -279,14 +285,15 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
         {/* Barang Keluar: Keterangan / Peruntukan */}
         {type === 'keluar' && (
           <div className="form-group">
-            <label className="form-label" htmlFor="inv-desc">Keterangan Pengambilan / Peruntukan</label>
+            <label className="form-label" htmlFor="inv-desc">Peruntukan Pengambilan</label>
             <textarea
               id="inv-desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Tulis alasan pengambilan barang, misal: Untuk pembagian baksos..."
+              placeholder="Tulis tujuan pengambilan barang..."
               className="form-textarea"
-              rows={3}
+              rows={2}
+              style={{ minHeight: '50px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
               required
             />
           </div>
@@ -296,14 +303,14 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
         <button
           type="submit"
           className="btn btn-primary"
-          style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+          style={{ width: '100%', padding: '0.55rem', marginTop: '0.15rem', minHeight: '36px', borderRadius: '6px' }}
         >
-          <Save size={18} />
-          {isOnline ? 'Simpan Transaksi Barang' : 'Simpan Sementara (Offline)'}
+          <Save size={14} />
+          <span>{isOnline ? 'Simpan Transaksi Barang' : 'Simpan Sementara (Offline)'}</span>
         </button>
 
         {!isOnline && (
-          <p style={{ fontSize: '0.725rem', color: 'var(--accent)', textAlign: 'center', marginTop: '-0.5rem', fontWeight: 500 }}>
+          <p style={{ fontSize: '0.65rem', color: 'var(--accent)', textAlign: 'center', marginTop: '-0.35rem', fontWeight: 500 }}>
             * Koneksi offline. Data akan masuk antrean sinkronisasi lokal.
           </p>
         )}

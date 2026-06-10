@@ -120,91 +120,96 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
 
   return (
     <div className="glass-card" style={{ maxWidth: '650px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Pencatatan Kas Masjid</h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.85rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.45rem' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 800 }}>Pencatatan Kas</h2>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
         
         {/* Toggle Pemasukan / Pengeluaran */}
-        <div className="form-group">
-          <label className="form-label">Jenis Transaksi Kas</label>
+        <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+          <label className="form-label">Jenis Transaksi</label>
           <div className="form-toggle-group">
             <button
               type="button"
               onClick={() => { setType('pemasukan'); setCategory(''); }}
               className={`btn ${type === 'pemasukan' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ flex: 1, gap: '0.4rem', padding: '0.65rem' }}
+              style={{ flex: 1, gap: '0.3rem', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem' }}
             >
-              <ArrowUpRight size={18} />
+              <ArrowUpRight size={15} />
               Pemasukan
             </button>
             <button
               type="button"
               onClick={() => { setType('pengeluaran'); setCategory(''); }}
               className={`btn ${type === 'pengeluaran' ? 'btn-danger' : 'btn-secondary'}`}
-              style={{ flex: 1, gap: '0.4rem', padding: '0.65rem' }}
+              style={{ flex: 1, gap: '0.3rem', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem' }}
             >
-              <ArrowDownLeft size={18} />
+              <ArrowDownLeft size={15} />
               Pengeluaran
             </button>
           </div>
         </div>
 
-        {/* Pilihan Kategori */}
-        <div className="form-group" style={{ position: 'relative' }}>
-          <label className="form-label" htmlFor="cash-category">Kategori Kas</label>
-          <select
-            id="cash-category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="form-select"
-            required
-          >
-            <option value="" disabled>-- Pilih Kategori Kas --</option>
-            {categories[type].map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-            <option value="Lainnya">Lainnya (Tulis di Keterangan)</option>
-          </select>
-        </div>
-
-        {/* Input Nominal Rp */}
-        <div className="form-group">
-          <label className="form-label" htmlFor="cash-amount">Nominal Uang (Rp)</label>
-          <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 600, color: 'var(--text-secondary)' }}>
-              Rp
-            </span>
-            <input
-              id="cash-amount"
-              type="text"
-              value={amountStr}
-              onChange={handleAmountChange}
-              placeholder="0"
-              className="form-input"
-              style={{ paddingLeft: '2.75rem', fontWeight: 700, fontSize: '1.1rem' }}
+        {/* Baris Kategori & Nominal (Grid 2-kolom) */}
+        <div className="form-grid-2">
+          {/* Pilihan Kategori */}
+          <div className="form-group" style={{ position: 'relative' }}>
+            <label className="form-label" htmlFor="cash-category">Kategori Kas</label>
+            <select
+              id="cash-category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="form-select"
+              style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
               required
-            />
+            >
+              <option value="" disabled>-- Pilih Kategori --</option>
+              {categories[type].map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+              <option value="Lainnya">Lainnya (Tulis di Keterangan)</option>
+            </select>
+          </div>
+
+          {/* Input Nominal Rp */}
+          <div className="form-group">
+            <label className="form-label" htmlFor="cash-amount">Nominal Uang (Rp)</label>
+            <div style={{ position: 'relative' }}>
+              <span style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                Rp
+              </span>
+              <input
+                id="cash-amount"
+                type="text"
+                value={amountStr}
+                onChange={handleAmountChange}
+                placeholder="0"
+                className="form-input"
+                style={{ paddingLeft: '2.1rem', fontWeight: 700, fontSize: '0.95rem', minHeight: '36px' }}
+                required
+              />
+            </div>
           </div>
         </div>
 
         {/* Input Keterangan Opsional */}
         <div className="form-group">
-          <label className="form-label" htmlFor="cash-desc">Keterangan Tambahan (Opsional)</label>
+          <label className="form-label" htmlFor="cash-desc">Keterangan (Opsional)</label>
           <textarea
             id="cash-desc"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Tulis detail transaksi di sini..."
+            placeholder="Tulis detail transaksi..."
             className="form-textarea"
-            rows={3}
+            rows={2}
+            style={{ minHeight: '50px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
           />
         </div>
 
         {/* Upload Foto Bukti */}
-        <div className="form-group">
-          <label className="form-label">Foto Bukti Transaksi (Opsional)</label>
+        <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+          <label className="form-label">Foto Bukti (Opsional)</label>
           <input
             type="file"
             accept="image/*"
@@ -218,21 +223,23 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
             <div 
               className="image-upload-area"
               onClick={() => fileInputRef.current?.click()}
+              style={{ padding: '0.55rem', minHeight: '65px' }}
             >
-              <Camera size={28} style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem' }} />
-              <p style={{ fontSize: '0.825rem', fontWeight: 500 }}>Klik untuk mengambil foto atau unggah gambar bukti</p>
-              <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>PNG, JPG atau WEBP (Maks. 1.5MB)</p>
+              <Camera size={20} style={{ color: 'var(--text-secondary)', marginBottom: '0.15rem' }} />
+              <p style={{ fontSize: '0.75rem', fontWeight: 600 }}>Ambil foto bukti transaksi</p>
+              <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>PNG, JPG atau WEBP (Maks. 1.5MB)</p>
             </div>
           ) : (
-            <div className="image-preview-container">
+            <div className="image-preview-container" style={{ maxWidth: '100px', maxHeight: '100px' }}>
               <img src={evidence} alt="Pratampil Bukti" className="image-preview" />
               <button 
                 type="button" 
                 onClick={handleRemoveImage}
                 className="btn-remove-image"
+                style={{ width: '24px', height: '24px', top: '0.35rem', right: '0.35rem' }}
                 title="Hapus gambar"
               >
-                <X size={16} />
+                <X size={12} />
               </button>
             </div>
           )}
@@ -243,16 +250,16 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
           type="submit"
           disabled={isUploadingImage}
           className="btn btn-primary"
-          style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+          style={{ width: '100%', padding: '0.55rem', marginTop: '0.15rem', minHeight: '36px', borderRadius: '6px' }}
         >
           {isUploadingImage
-            ? <><Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} /> Mengunggah foto...</>
-            : <><Save size={18} />{isOnline ? 'Simpan Transaksi Kas' : 'Simpan Sementara (Offline)'}</>
+            ? <><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> Mengunggah...</>
+            : <><Save size={14} /> <span>{isOnline ? 'Simpan Transaksi Kas' : 'Simpan Sementara (Offline)'}</span></>
           }
         </button>
 
         {!isOnline && (
-          <p style={{ fontSize: '0.725rem', color: 'var(--accent)', textAlign: 'center', marginTop: '-0.5rem', fontWeight: 500 }}>
+          <p style={{ fontSize: '0.65rem', color: 'var(--accent)', textAlign: 'center', marginTop: '-0.35rem', fontWeight: 500 }}>
             * Koneksi offline. Data akan masuk antrean sinkronisasi lokal.
           </p>
         )}

@@ -25,51 +25,51 @@ export const Navbar: React.FC<NavbarProps> = ({
   mosqueName = 'Masjid Digital',
 }) => {
   return (
-    <header className="nav-header">
+    <header className="nav-header" style={{ alignItems: 'center' }}>
       <div className="logo-section">
-        <Moon className="logo-icon" size={32} />
-        <div>
-          <h1 className="logo-title">{mosqueName}</h1>
-          <p className="logo-desc">
-            Sistem Informasi &amp; Manajemen Mandiri
-          </p>
+        {/* Tampilan logo hanya muncul di perangkat mobile (di desktop diwakili oleh sidebar) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }} className="mobile-logo-wrapper">
+          <Moon className="logo-icon" size={20} />
+          <div>
+            <h1 className="logo-title" style={{ fontSize: '0.95rem', fontWeight: 800 }}>{mosqueName}</h1>
+          </div>
         </div>
       </div>
 
-      <div className="conn-panel">
-        {/* Status Koneksi & Progres Sinkronisasi */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem' }}>
-          <div className={`status-badge ${isOnline ? 'online' : 'offline'}`}>
-            <span className={`status-dot ${isOnline ? 'online' : 'offline'}`}></span>
-            {isOnline ? 'Tersambung (Online)' : 'Menunggu koneksi (Offline)'}
+      <div className="conn-panel" style={{ gap: '0.4rem' }}>
+        {/* Status Koneksi */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.1rem' }}>
+          <div className={`status-badge ${isOnline ? 'online' : 'offline'}`} style={{ padding: '0.25rem 0.5rem', fontSize: '0.65rem' }}>
+            <span className={`status-dot ${isOnline ? 'online' : 'offline'}`} style={{ width: '4px', height: '4px' }}></span>
+            {isOnline ? 'Online' : 'Offline'}
           </div>
           {isSyncing && syncProgressMsg && (
             <span style={{ 
-              fontSize: '0.65rem', 
+              fontSize: '0.6rem', 
               color: 'var(--primary)', 
               fontWeight: 700, 
               display: 'inline-flex', 
               alignItems: 'center', 
-              gap: '0.25rem',
+              gap: '0.2rem',
               textShadow: '0 0 8px rgba(16, 185, 129, 0.2)'
             }}>
-              <RefreshCw size={10} style={{ animation: 'spin 1.5s linear infinite' }} />
+              <RefreshCw size={8} style={{ animation: 'spin 1.5s linear infinite' }} />
               {syncProgressMsg}
             </span>
           )}
         </div>
 
-        {/* Tombol Sinkronisasi Manual (jika ada data antrean dan sedang online) */}
+        {/* Tombol Sinkronisasi Manual */}
         {queueCount > 0 && isOnline && (
           <button
             onClick={onManualSync}
             disabled={isSyncing}
             className="btn btn-secondary"
-            style={{ padding: '0.4rem 0.75rem', fontSize: '0.775rem', gap: '0.35rem', minHeight: '38px' }}
+            style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem', gap: '0.25rem', minHeight: '32px', borderRadius: '6px' }}
             title="Sinkronkan data sekarang"
           >
-            <RefreshCw size={14} style={{ animation: isSyncing ? 'spin 1.5s linear infinite' : 'none' }} />
-            Sync ({queueCount})
+            <RefreshCw size={12} style={{ animation: isSyncing ? 'spin 1.5s linear infinite' : 'none' }} />
+            <span>Sync ({queueCount})</span>
           </button>
         )}
 
@@ -77,31 +77,31 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           onClick={onToggleSim}
           className={`btn ${isSimulatedOffline ? 'btn-accent' : 'btn-secondary'}`}
-          style={{ padding: '0.4rem 0.75rem', fontSize: '0.775rem', gap: '0.35rem', minHeight: '38px' }}
+          style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem', gap: '0.25rem', minHeight: '32px', borderRadius: '6px' }}
           title={isSimulatedOffline ? 'Aktifkan koneksi internet' : 'Simulasikan hilangnya koneksi internet'}
         >
           {isSimulatedOffline ? (
             <>
-              <WifiOff size={14} />
-              Simulasi Offline
+              <WifiOff size={12} />
+              <span>Offline</span>
             </>
           ) : (
             <>
-              <Wifi size={14} />
-              Simulasi Online
+              <Wifi size={12} />
+              <span>Online</span>
             </>
           )}
         </button>
 
-        {/* Tombol Pengaturan — dipindah ke sini agar bottom nav lebih ringkas */}
+        {/* Tombol Pengaturan */}
         <button
           onClick={onOpenSettings}
           className="btn btn-secondary"
-          style={{ padding: '0.4rem 0.6rem', minHeight: '38px' }}
+          style={{ padding: '0.3rem 0.45rem', minHeight: '32px', borderRadius: '6px' }}
           title="Pengaturan"
           aria-label="Buka Pengaturan"
         >
-          <Settings2 size={18} />
+          <Settings2 size={15} />
         </button>
       </div>
     </header>

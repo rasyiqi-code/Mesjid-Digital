@@ -86,17 +86,17 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
 
       {/* Header dengan tombol tambah */}
-      <div className="glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--primary)', padding: '0.75rem', borderRadius: '12px' }}>
-            <CalendarCheck size={28} />
+      <div className="glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.65rem', padding: '0.75rem 1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ background: 'rgba(16, 185, 129, 0.08)', color: 'var(--primary)', padding: '0.55rem', borderRadius: '8px' }}>
+            <CalendarCheck size={20} />
           </div>
           <div style={{ textAlign: 'left' }}>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Program Masjid</h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            <h2 style={{ fontSize: '0.95rem', fontWeight: 800 }}>Program Masjid</h2>
+            <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>
               {programs.length} kegiatan terdaftar
             </p>
           </div>
@@ -105,18 +105,18 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
           type="button"
           onClick={() => setShowForm(!showForm)}
           className="btn btn-primary"
-          style={{ padding: '0.65rem 1.25rem', gap: '0.4rem' }}
+          style={{ padding: '0.45rem 0.85rem', gap: '0.3', minHeight: '34px', fontSize: '0.8rem', borderRadius: '6px' }}
         >
-          {showForm ? <ChevronUp size={18} /> : <PlusCircle size={18} />}
+          {showForm ? <ChevronUp size={14} /> : <PlusCircle size={14} />}
           {showForm ? 'Tutup Form' : 'Tambah Program'}
         </button>
       </div>
 
       {/* Form Tambah Program */}
       {showForm && (
-        <div className="glass-card" style={{ textAlign: 'left' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.25rem' }}>Form Tambah Program Kegiatan</h3>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
+          <h3 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.65rem' }}>Form Tambah Program Kegiatan</h3>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
 
             {/* Judul Kegiatan */}
             <div className="form-group" style={{ marginBottom: 0 }}>
@@ -128,6 +128,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Cth: Kajian Ahad Pagi, Shalat Jumat"
                 className="form-input"
+                style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                 required
               />
             </div>
@@ -136,8 +137,8 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
               {/* Waktu */}
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label" htmlFor="prog-time">
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <Clock size={13} /> Waktu *
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                    <Clock size={12} /> Waktu *
                   </span>
                 </label>
                 <input
@@ -146,6 +147,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                   className="form-input"
+                  style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                   required
                 />
               </div>
@@ -153,8 +155,8 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
               {/* Lokasi */}
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label" htmlFor="prog-location">
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <MapPin size={13} /> Lokasi *
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                    <MapPin size={12} /> Lokasi *
                   </span>
                 </label>
                 <input
@@ -164,6 +166,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Cth: Aula Masjid, Ruang Serbaguna"
                   className="form-input"
+                  style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                   required
                 />
               </div>
@@ -172,8 +175,8 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
             {/* Penanggung Jawab */}
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label" htmlFor="prog-pic">
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <User size={13} /> Penanggung Jawab *
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                  <User size={12} /> Penanggung Jawab *
                 </span>
               </label>
               <input
@@ -183,6 +186,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                 onChange={(e) => setPicName(e.target.value)}
                 placeholder="Cth: Ust. Abdullah, Bid. Pembinaan DKM"
                 className="form-input"
+                style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                 required
               />
             </div>
@@ -191,7 +195,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Jenis Kegiatan</label>
               <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', fontSize: '0.85rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', fontSize: '0.85rem' }}>
                   <input
                     type="radio"
                     name="recurring"
@@ -200,7 +204,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                   />
                   Kegiatan Sekali
                 </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', fontSize: '0.85rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', fontSize: '0.85rem' }}>
                   <input
                     type="radio"
                     name="recurring"
@@ -222,6 +226,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                     value={recurrenceType}
                     onChange={(e) => setRecurrenceType(e.target.value as 'weekly' | 'monthly')}
                     className="form-input"
+                    style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                   >
                     <option value="weekly">Mingguan</option>
                     <option value="monthly">Bulanan</option>
@@ -237,6 +242,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                       value={dayOrDate}
                       onChange={(e) => setDayOrDate(e.target.value)}
                       className="form-input"
+                      style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                     >
                       {DAYS_OF_WEEK.map((d) => (
                         <option key={d} value={d}>{d}</option>
@@ -252,6 +258,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                       onChange={(e) => setDayOrDate(e.target.value)}
                       placeholder="Cth: 15"
                       className="form-input"
+                      style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                     />
                   )}
                 </div>
@@ -265,6 +272,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                   value={dayOrDate}
                   onChange={(e) => setDayOrDate(e.target.value)}
                   className="form-input"
+                  style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                 />
               </div>
             )}
@@ -279,16 +287,16 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                 placeholder="Informasi tambahan tentang kegiatan ini..."
                 className="form-input"
                 rows={2}
-                style={{ resize: 'vertical' }}
+                style={{ resize: 'vertical', minHeight: '50px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
               />
             </div>
 
             {/* Tombol */}
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button type="submit" className="btn btn-primary" style={{ flex: 1, padding: '0.75rem' }}>
-                <PlusCircle size={16} /> Simpan Program
+            <div style={{ display: 'flex', gap: '0.55rem' }}>
+              <button type="submit" className="btn btn-primary" style={{ flex: 1, padding: '0.55rem', minHeight: '36px', borderRadius: '6px' }}>
+                <PlusCircle size={14} /> Simpan Program
               </button>
-              <button type="button" onClick={resetForm} className="btn btn-secondary" style={{ padding: '0.75rem 1.25rem' }}>
+              <button type="button" onClick={resetForm} className="btn btn-secondary" style={{ padding: '0.55rem 1rem', minHeight: '36px', borderRadius: '6px' }}>
                 Batal
               </button>
             </div>
@@ -298,13 +306,13 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
 
       {/* Daftar Program */}
       {programs.length === 0 ? (
-        <div className="glass-card" style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-secondary)' }}>
-          <CalendarCheck size={40} style={{ margin: '0 auto 1rem', opacity: 0.4 }} />
-          <p style={{ fontSize: '0.9rem' }}>Belum ada program kegiatan yang terdaftar.</p>
-          <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>Klik "Tambah Program" untuk memulai.</p>
+        <div className="glass-card" style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-secondary)' }}>
+          <CalendarCheck size={32} style={{ margin: '0 auto 0.75rem', opacity: 0.4 }} />
+          <p style={{ fontSize: '0.8rem' }}>Belum ada program kegiatan yang terdaftar.</p>
+          <p style={{ fontSize: '0.725rem', marginTop: '0.15rem' }}>Klik "Tambah Program" untuk memulai.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '0.75rem' }}>
           {programs.map((prog) => {
             const recKey = prog.isRecurring ? (prog.recurrenceType ?? 'weekly') : 'once';
             const badge = RECURRENCE_BADGE[recKey];
@@ -313,39 +321,39 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
               : `${prog.dayOrDate} · ${prog.time}`;
 
             return (
-              <div key={prog.id} className="glass-card program-card" style={{ textAlign: 'left', position: 'relative' }}>
+              <div key={prog.id} className="glass-card program-card" style={{ textAlign: 'left', position: 'relative', padding: '0.85rem' }}>
                 {/* Lencana Jenis */}
                 <div style={{
-                  position: 'absolute', top: '1rem', right: '1rem',
-                  background: `${badge.color}22`, color: badge.color,
-                  padding: '0.2rem 0.6rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 700,
-                  display: 'flex', alignItems: 'center', gap: '0.25rem'
+                  position: 'absolute', top: '0.85rem', right: '0.85rem',
+                  background: `${badge.color}15`, color: badge.color,
+                  padding: '0.15rem 0.45rem', borderRadius: '999px', fontSize: '0.65rem', fontWeight: 700,
+                  display: 'flex', alignItems: 'center', gap: '0.2rem'
                 }}>
-                  {prog.isRecurring && <RefreshCw size={10} />}
+                  {prog.isRecurring && <RefreshCw size={8} />}
                   {badge.label}
                 </div>
 
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.6rem', paddingRight: '6rem' }}>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.45rem', paddingRight: '5.5rem' }}>
                   {prog.title}
                 </h4>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginBottom: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    <Clock size={13} style={{ flexShrink: 0 }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '0.55rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    <Clock size={12} style={{ flexShrink: 0 }} />
                     <span>{scheduleLabel}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    <MapPin size={13} style={{ flexShrink: 0 }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    <MapPin size={12} style={{ flexShrink: 0 }} />
                     <span>{prog.location}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    <User size={13} style={{ flexShrink: 0 }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    <User size={12} style={{ flexShrink: 0 }} />
                     <span>{prog.picName}</span>
                   </div>
                 </div>
 
                 {prog.description && (
-                  <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '0.6rem', marginBottom: '0.75rem' }}>
+                  <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.45rem', marginBottom: '0.55rem' }}>
                     {prog.description}
                   </p>
                 )}
@@ -358,9 +366,9 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
                     }
                   }}
                   className="btn btn-danger"
-                  style={{ width: '100%', padding: '0.5rem', fontSize: '0.8rem', marginTop: 'auto' }}
+                  style={{ width: '100%', padding: '0.4rem', fontSize: '0.75rem', marginTop: 'auto', minHeight: '32px', borderRadius: '6px' }}
                 >
-                  <Trash2 size={14} /> Hapus Program
+                  <Trash2 size={12} /> Hapus Program
                 </button>
               </div>
             );
@@ -370,8 +378,8 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
 
       {/* Catatan expand */}
       {programs.length > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: 'var(--text-secondary)', justifyContent: 'center' }}>
-          <ChevronDown size={12} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.7rem', color: 'var(--text-muted)', justifyContent: 'center' }}>
+          <ChevronDown size={10} />
           Menampilkan {programs.length} program. Diurutkan dari yang paling baru ditambahkan.
         </div>
       )}

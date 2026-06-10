@@ -129,27 +129,27 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '700px', margin: '0 auto' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', maxWidth: '700px', margin: '0 auto' }}>
 
       {/* Header */}
-      <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--primary)', padding: '0.75rem', borderRadius: '12px' }}>
-          <Settings2 size={28} />
+      <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem' }}>
+        <div style={{ background: 'rgba(16, 185, 129, 0.08)', color: 'var(--primary)', padding: '0.55rem', borderRadius: '8px' }}>
+          <Settings2 size={20} />
         </div>
         <div style={{ textAlign: 'left' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Pengaturan Aplikasi</h2>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-            Konfigurasi identitas masjid, preferensi sistem, dan integrasi Google
+          <h2 style={{ fontSize: '0.95rem', fontWeight: 800 }}>Pengaturan Aplikasi</h2>
+          <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>
+            Konfigurasi identitas masjid dan integrasi Google Sheets
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
 
         {/* ── Identitas Masjid ─────────────────────────────────────────── */}
-        <div className="glass-card" style={{ textAlign: 'left' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Building2 size={18} style={{ color: 'var(--primary)' }} />
+        <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
+          <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Building2 size={15} style={{ color: 'var(--primary)' }} />
             Identitas Masjid
           </h3>
 
@@ -163,6 +163,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 onChange={(e) => setMosqueName(e.target.value)}
                 placeholder="Cth: Masjid Al-Ikhlas"
                 className="form-input"
+                style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                 required
               />
             </div>
@@ -175,14 +176,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 onChange={(e) => setDkmName(e.target.value)}
                 placeholder="Cth: DKM Al-Ikhlas"
                 className="form-input"
+                style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
               />
             </div>
           </div>
 
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label" htmlFor="setting-contact">
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Phone size={13} /> Nomor Kontak Pengurus (Opsional)
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                <Phone size={12} /> Kontak Pengurus (Opsional)
               </span>
             </label>
             <input
@@ -192,14 +194,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               onChange={(e) => setContactNumber(e.target.value)}
               placeholder="Cth: 0812-3456-7890"
               className="form-input"
+              style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
             />
           </div>
         </div>
 
         {/* ── Preferensi Sistem ────────────────────────────────────────── */}
-        <div className="glass-card" style={{ textAlign: 'left' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <AlertTriangle size={18} style={{ color: 'var(--accent)' }} />
+        <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
+          <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <AlertTriangle size={15} style={{ color: 'var(--accent)' }} />
             Preferensi Sistem
           </h3>
 
@@ -213,28 +216,28 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               min={1}
               max={100}
               className="form-input"
+              style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
             />
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>
-              Barang di bawah <strong style={{ color: 'var(--accent)' }}>{criticalStockThreshold} unit</strong> ditandai kritis dan muncul sebagai peringatan di Dashboard.
+            <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+              Barang di bawah <strong style={{ color: 'var(--accent)' }}>{criticalStockThreshold} unit</strong> akan ditandai kritis di Dashboard.
             </p>
           </div>
         </div>
 
         {/* ── Integrasi Google ─────────────────────────────────────────── */}
-        <div className="glass-card" style={{ textAlign: 'left', borderColor: 'rgba(66, 133, 244, 0.2)' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Wifi size={18} style={{ color: '#4285f4' }} />
-            Integrasi Google (Sheets + Drive)
+        <div className="glass-card" style={{ textAlign: 'left', borderColor: 'rgba(66, 133, 244, 0.2)', padding: '0.85rem 1rem' }}>
+          <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Wifi size={15} style={{ color: '#4285f4' }} />
+            Integrasi Google
           </h3>
-          <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: 1.55 }}>
-            Hubungkan ke Google Sheets untuk backup data dan Google Drive untuk foto bukti transaksi.
-            Lihat <strong>apps-script/SETUP.md</strong> untuk panduan setup.
+          <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginBottom: '0.85rem', lineHeight: 1.45 }}>
+            Hubungkan ke Google Sheets untuk backup data. Panduan di <strong>SETUP.md</strong>.
           </p>
 
           <div className="form-group">
             <label className="form-label" htmlFor="setting-script-url">
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Link2 size={13} /> URL Google Apps Script Web App
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                <Link2 size={12} /> URL Google Apps Script Web App
               </span>
             </label>
             <input
@@ -244,14 +247,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               onChange={(e) => { setAppsScriptUrl(e.target.value); setConnStatus('idle'); }}
               placeholder="https://script.google.com/macros/s/.../exec"
               className="form-input"
-              style={{ fontFamily: 'monospace', fontSize: '0.78rem' }}
+              style={{ fontFamily: 'monospace', fontSize: '0.75rem', minHeight: '36px', padding: '0.45rem 0.65rem' }}
             />
           </div>
 
           <div className="form-group">
             <label className="form-label" htmlFor="setting-script-token">
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <KeyRound size={13} /> Token Keamanan
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                <KeyRound size={12} /> Token Keamanan
               </span>
             </label>
             <input
@@ -259,27 +262,28 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               type="password"
               value={appsScriptToken}
               onChange={(e) => { setAppsScriptToken(e.target.value); setConnStatus('idle'); }}
-              placeholder="Token yang sama dengan di Apps Script"
+              placeholder="Token DKM"
               className="form-input"
+              style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
             />
           </div>
 
           {/* Status hasil test koneksi */}
           {connStatus !== 'idle' && (
             <div style={{
-              display: 'flex', alignItems: 'center', gap: '0.6rem',
-              padding: '0.65rem 0.9rem', borderRadius: '10px', marginBottom: '1rem',
+              display: 'flex', alignItems: 'center', gap: '0.45rem',
+              padding: '0.45rem 0.65rem', borderRadius: '6px', marginBottom: '0.65rem',
               background: connStatus === 'ok'
-                ? 'rgba(16, 185, 129, 0.1)'
+                ? 'rgba(16, 185, 129, 0.08)'
                 : connStatus === 'error'
-                  ? 'rgba(239, 68, 68, 0.1)'
-                  : 'rgba(255,255,255,0.05)',
-              border: `1px solid ${connStatus === 'ok' ? 'rgba(16,185,129,0.3)' : connStatus === 'error' ? 'rgba(239,68,68,0.3)' : 'transparent'}`,
+                  ? 'rgba(239, 68, 68, 0.08)'
+                  : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${connStatus === 'ok' ? 'rgba(16,185,129,0.2)' : connStatus === 'error' ? 'rgba(239,68,68,0.2)' : 'transparent'}`,
             }}>
-              {connStatus === 'testing' && <Loader2 size={16} style={{ animation: 'spin 1s linear infinite', color: 'var(--primary)' }} />}
-              {connStatus === 'ok' && <CheckCircle2 size={16} style={{ color: 'var(--success)' }} />}
-              {connStatus === 'error' && <XCircle size={16} style={{ color: 'var(--danger)' }} />}
-              <span style={{ fontSize: '0.8rem', color: connStatus === 'ok' ? 'var(--success)' : connStatus === 'error' ? 'var(--danger)' : 'var(--text-secondary)' }}>
+              {connStatus === 'testing' && <Loader2 size={13} style={{ animation: 'spin 1s linear infinite', color: 'var(--primary)' }} />}
+              {connStatus === 'ok' && <CheckCircle2 size={13} style={{ color: 'var(--success)' }} />}
+              {connStatus === 'error' && <XCircle size={13} style={{ color: 'var(--danger)' }} />}
+              <span style={{ fontSize: '0.75rem', color: connStatus === 'ok' ? 'var(--success)' : connStatus === 'error' ? 'var(--danger)' : 'var(--text-secondary)' }}>
                 {connMessage}
               </span>
             </div>
@@ -290,22 +294,22 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             onClick={handleTestConnection}
             disabled={connStatus === 'testing'}
             className="btn btn-secondary"
-            style={{ width: '100%', padding: '0.65rem', marginBottom: 0 }}
+            style={{ width: '100%', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem', borderRadius: '6px' }}
           >
             {connStatus === 'testing'
-              ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Menguji koneksi...</>
-              : <><Wifi size={16} /> Test Koneksi</>
+              ? <><Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> Menguji...</>
+              : <><Wifi size={12} /> Test Koneksi</>
             }
           </button>
         </div>
 
         {/* ── Tombol Simpan & Reset ────────────────────────────────────── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.85rem' }}>
-            <Save size={18} /> Simpan Pengaturan
+        <div style={{ display: 'flex', gap: '0.55rem' }}>
+          <button type="submit" className="btn btn-primary" style={{ flex: 1, padding: '0.55rem', minHeight: '36px', borderRadius: '6px' }}>
+            <Save size={14} /> Simpan Pengaturan
           </button>
-          <button type="button" onClick={handleReset} className="btn btn-secondary" style={{ width: '100%', padding: '0.85rem' }}>
-            <RotateCcw size={16} /> Reset ke Default
+          <button type="button" onClick={handleReset} className="btn btn-secondary" style={{ flex: 1, padding: '0.55rem', minHeight: '36px', borderRadius: '6px' }}>
+            <RotateCcw size={12} /> Reset ke Default
           </button>
         </div>
       </form>
@@ -313,21 +317,22 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       {/* ── Sinkronisasi Manual ke Google Sheets ─────────────────────── */}
       <div className="glass-card" style={{
         textAlign: 'left',
-        borderColor: settings.appsScriptUrl ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255,255,255,0.08)',
+        padding: '0.85rem 1rem',
+        borderColor: settings.appsScriptUrl ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.05)',
       }}>
-        <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <RefreshCw size={18} style={{ color: 'var(--primary)' }} />
+        <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <RefreshCw size={15} style={{ color: 'var(--primary)' }} />
           Sinkronisasi ke Google Sheets
         </h3>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          <Clock size={13} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.725rem', color: 'var(--text-secondary)', marginBottom: '0.65rem' }}>
+          <Clock size={12} />
           {formatLastSynced(settings.lastSyncedAt)}
         </div>
 
         {!settings.appsScriptUrl ? (
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
-            Konfigurasi URL dan Token Google Apps Script di atas, lalu simpan pengaturan untuk mengaktifkan sinkronisasi.
+          <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
+            Konfigurasi URL dan Token di atas terlebih dahulu.
           </p>
         ) : (
           <button
@@ -335,26 +340,25 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             onClick={handleSync}
             disabled={isSyncing}
             className="btn btn-primary"
-            style={{ width: '100%', padding: '0.85rem' }}
+            style={{ width: '100%', padding: '0.55rem', minHeight: '36px', borderRadius: '6px' }}
           >
             {isSyncing
-              ? <><Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} /> Menyinkronkan...</>
-              : <><RefreshCw size={18} /> Sync Sekarang ke Google Sheets</>
+              ? <><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> Menyinkronkan...</>
+              : <><RefreshCw size={14} /> Sync Sekarang</>
             }
           </button>
         )}
       </div>
 
       {/* ── Tentang Aplikasi ─────────────────────────────────────────── */}
-      <div className="glass-card" style={{ textAlign: 'left' }}>
-        <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <User size={18} style={{ color: 'var(--info)' }} />
+      <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
+        <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.45rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <User size={15} style={{ color: 'var(--info)' }} />
           Tentang Aplikasi
         </h3>
-        <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
           <strong style={{ color: 'var(--text-primary)' }}>Masjid Digital</strong> — Sistem Informasi Manajemen Mandiri Masjid.
-          <br />Versi <strong>1.3.0</strong> · Data lokal tersimpan di IndexedDB perangkat.
-          <br />Mendukung mode offline-first dengan sinkronisasi opsional ke Google Sheets.
+          <br />Versi 1.3.0 · Data disimpan lokal di IndexedDB perangkat.
         </p>
       </div>
 

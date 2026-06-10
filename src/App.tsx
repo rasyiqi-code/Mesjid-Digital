@@ -44,6 +44,7 @@ import {
   Search,
   PackageCheck,
   CalendarCheck,
+  Moon,
 } from 'lucide-react';
 import { CashHistory } from './components/CashHistory';
 import { ImageModal } from './components/ImageModal';
@@ -281,254 +282,311 @@ function App() {
   );
 
   return (
-    <div className="app-container">
-      {/* Navigasi Atas & Indikator Koneksi */}
-      <Navbar
-        isOnline={isOnline}
-        isSyncing={isSyncing}
-        syncProgressMsg={syncProgressMsg}
-        isSimulatedOffline={isSimulatedOffline}
-        queueCount={queueCount}
-        onToggleSim={toggleConnectionSim}
-        onManualSync={triggerSync}
-        onOpenSettings={() => setActiveTab('pengaturan')}
-        mosqueName={settings.mosqueName}
-      />
+    <div className="app-layout">
+      {/* Sidebar untuk Desktop */}
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <Moon className="sidebar-logo-icon" size={24} />
+          <span className="sidebar-logo-text">{settings.mosqueName || 'Masjid Digital'}</span>
+        </div>
+        <nav className="sidebar-menu">
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`sidebar-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+            title="Dashboard Utama"
+          >
+            <LayoutDashboard size={16} />
+            <span>Dashboard</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('catat_kas')}
+            className={`sidebar-btn ${activeTab === 'catat_kas' ? 'active' : ''}`}
+            title="Buku Jurnal Kas"
+          >
+            <PlusCircle size={16} />
+            <span>Kas</span>
+          </button>
+          <button
+            onClick={() => { setActiveTab('catat_barang'); setBarangSubTab('catat'); }}
+            className={`sidebar-btn ${activeTab === 'catat_barang' ? 'active' : ''}`}
+            title="Inventaris & Logistik"
+          >
+            <PackageCheck size={16} />
+            <span>Barang</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('program')}
+            className={`sidebar-btn ${activeTab === 'program' ? 'active' : ''}`}
+            title="Jadwal Program & Kegiatan"
+          >
+            <CalendarCheck size={16} />
+            <span>Program</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('laporan')}
+            className={`sidebar-btn ${activeTab === 'laporan' ? 'active' : ''}`}
+            title="Laporan & Ekspor"
+          >
+            <FileText size={16} />
+            <span>Laporan</span>
+          </button>
+        </nav>
+      </aside>
 
-      {/* Tabs Menu — 5 item utama, Pengaturan di Navbar, Inventaris merge ke Barang */}
-      <div className="tabs-container">
+      {/* Floating Pill Menu untuk Mobile */}
+      <nav className="mobile-nav">
         <button
           onClick={() => setActiveTab('dashboard')}
-          className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+          className={`mobile-nav-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
         >
-          <LayoutDashboard size={18} />
-          Dashboard
+          <LayoutDashboard size={16} />
+          <span>Dashboard</span>
         </button>
         <button
           onClick={() => setActiveTab('catat_kas')}
-          className={`tab-btn ${activeTab === 'catat_kas' ? 'active' : ''}`}
+          className={`mobile-nav-btn ${activeTab === 'catat_kas' ? 'active' : ''}`}
         >
-          <PlusCircle size={18} />
-          Kas
+          <PlusCircle size={16} />
+          <span>Kas</span>
         </button>
         <button
-          onClick={() => setActiveTab('catat_barang')}
-          className={`tab-btn ${activeTab === 'catat_barang' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('catat_barang'); setBarangSubTab('catat'); }}
+          className={`mobile-nav-btn ${activeTab === 'catat_barang' ? 'active' : ''}`}
         >
-          <PackageCheck size={18} />
-          Barang
+          <PackageCheck size={16} />
+          <span>Barang</span>
         </button>
         <button
           onClick={() => setActiveTab('program')}
-          className={`tab-btn ${activeTab === 'program' ? 'active' : ''}`}
+          className={`mobile-nav-btn ${activeTab === 'program' ? 'active' : ''}`}
         >
-          <CalendarCheck size={18} />
-          Program
+          <CalendarCheck size={16} />
+          <span>Program</span>
         </button>
         <button
           onClick={() => setActiveTab('laporan')}
-          className={`tab-btn ${activeTab === 'laporan' ? 'active' : ''}`}
+          className={`mobile-nav-btn ${activeTab === 'laporan' ? 'active' : ''}`}
         >
-          <FileText size={18} />
-          Laporan
+          <FileText size={16} />
+          <span>Laporan</span>
         </button>
-      </div>
+      </nav>
 
-      {/* Area Konten Utama */}
-      <main style={{ minHeight: '60vh' }}>
-        {activeTab === 'dashboard' && (
-          <Dashboard 
-            onNavigateToTab={(tab) => setActiveTab(tab)} 
-            cashSummary={cashSummary}
-            queue={queueList}
-            criticalItems={criticalItems}
-          />
-        )}
+      {/* Pembungkus Konten Utama */}
+      <div className="main-content">
+        {/* Navigasi Atas & Indikator Koneksi */}
+        <Navbar
+          isOnline={isOnline}
+          isSyncing={isSyncing}
+          syncProgressMsg={syncProgressMsg}
+          isSimulatedOffline={isSimulatedOffline}
+          queueCount={queueCount}
+          onToggleSim={toggleConnectionSim}
+          onManualSync={triggerSync}
+          onOpenSettings={() => setActiveTab('pengaturan')}
+          mosqueName={settings.mosqueName}
+        />
 
-        {activeTab === 'catat_kas' && (
-          <div className="dashboard-details-grid">
-            <CashTransactionForm
-              isOnline={isOnline}
-              onSave={handleSaveCash}
-              showToast={showToast}
-              sheetsConfig={settings.appsScriptUrl ? { url: settings.appsScriptUrl, token: settings.appsScriptToken } : undefined}
+        <main style={{ minHeight: '60vh' }} className="animate-in-fade">
+          {activeTab === 'dashboard' && (
+            <Dashboard 
+              onNavigateToTab={(tab) => {
+                if (tab === 'inventaris') {
+                  setActiveTab('catat_barang');
+                  setBarangSubTab('stok');
+                } else {
+                  setActiveTab(tab);
+                }
+              }} 
+              cashSummary={cashSummary}
+              queue={queueList}
+              criticalItems={criticalItems}
             />
-            <div className="glass-card">
-              <CashHistory
-                cashTransactions={cashHistory}
-                onDelete={handleDeleteCash}
-                onViewImage={(url) => setActiveModalImage(url)}
+          )}
+
+          {activeTab === 'catat_kas' && (
+            <div className="dashboard-details-grid">
+              <CashTransactionForm
+                isOnline={isOnline}
+                onSave={handleSaveCash}
+                showToast={showToast}
+                sheetsConfig={settings.appsScriptUrl ? { url: settings.appsScriptUrl, token: settings.appsScriptToken } : undefined}
               />
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'catat_barang' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {/* Sub-tab: Catat vs Stok */}
-            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.04)', padding: '0.35rem', borderRadius: '14px', maxWidth: '340px', margin: '0 auto', width: '100%' }}>
-              <button
-                onClick={() => setBarangSubTab('catat')}
-                className={`btn ${barangSubTab === 'catat' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ flex: 1, padding: '0.55rem', fontSize: '0.85rem', borderRadius: '10px' }}
-              >
-                <PackageCheck size={16} /> Catat Barang
-              </button>
-              <button
-                onClick={() => setBarangSubTab('stok')}
-                className={`btn ${barangSubTab === 'stok' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ flex: 1, padding: '0.55rem', fontSize: '0.85rem', borderRadius: '10px' }}
-              >
-                <FolderOpen size={16} /> Stok Gudang
-              </button>
-            </div>
-
-            {/* Sub-tab Catat: Form input + riwayat mutasi */}
-            {barangSubTab === 'catat' && (
-              <div className="dashboard-details-grid">
-                <InventoryForm
-                  isOnline={isOnline}
-                  onSave={handleSaveInventory}
-                  showToast={showToast}
-                  updateTrigger={updateTrigger}
+              <div className="glass-card">
+                <CashHistory
+                  cashTransactions={cashHistory}
+                  onDelete={handleDeleteCash}
+                  onViewImage={(url) => setActiveModalImage(url)}
                 />
-                <div className="glass-card">
-                  <InventoryHistory
-                    transactions={invHistory}
-                    onDelete={handleDeleteInventory}
-                  />
-                </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Sub-tab Stok: Daftar stok real-time + pencarian */}
-            {barangSubTab === 'stok' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <div className="glass-card flex-mobile-col">
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Stok Gudang Terkini</h3>
-                  <div className="search-input-wrapper">
-                    <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
-                    <input
-                      type="text"
-                      placeholder="Cari barang..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="form-input"
-                      style={{ paddingLeft: '2.5rem' }}
+          {activeTab === 'catat_barang' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              {/* Sub-tab: Catat vs Stok */}
+              <div style={{ display: 'flex', gap: '0.35rem', background: 'rgba(255,255,255,0.02)', padding: '0.25rem', borderRadius: '10px', maxWidth: '300px', margin: '0 auto', width: '100%', border: '1px solid var(--border-subtle)' }}>
+                <button
+                  onClick={() => setBarangSubTab('catat')}
+                  className={`btn ${barangSubTab === 'catat' ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ flex: 1, padding: '0.45rem', fontSize: '0.8rem', borderRadius: '6px', minHeight: '32px' }}
+                >
+                  <PackageCheck size={14} /> Catat
+                </button>
+                <button
+                  onClick={() => setBarangSubTab('stok')}
+                  className={`btn ${barangSubTab === 'stok' ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ flex: 1, padding: '0.45rem', fontSize: '0.8rem', borderRadius: '6px', minHeight: '32px' }}
+                >
+                  <FolderOpen size={14} /> Stok
+                </button>
+              </div>
+
+              {/* Sub-tab Catat: Form input + riwayat mutasi */}
+              {barangSubTab === 'catat' && (
+                <div className="dashboard-details-grid">
+                  <InventoryForm
+                    isOnline={isOnline}
+                    onSave={handleSaveInventory}
+                    showToast={showToast}
+                    updateTrigger={updateTrigger}
+                  />
+                  <div className="glass-card">
+                    <InventoryHistory
+                      transactions={invHistory}
+                      onDelete={handleDeleteInventory}
                     />
                   </div>
                 </div>
-                <div className="glass-card" style={{ textAlign: 'left' }}>
-                  {/* Tabel Desktop */}
-                  <div className="desktop-table-view">
-                    <div className="table-container">
-                      <table className="custom-table">
-                        <thead>
-                          <tr>
-                            <th>Nama Barang</th>
-                            <th>Kategori</th>
-                            <th>Stok</th>
-                            <th>Satuan</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredInvItems.length === 0 ? (
-                            <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>Tidak ada barang.</td></tr>
-                          ) : (
-                            filteredInvItems.map((item) => (
-                              <tr key={item.name}>
-                                <td style={{ fontWeight: 600 }}>{item.name}</td>
-                                <td style={{ color: 'var(--text-secondary)' }}>{item.category}</td>
-                                <td style={{ fontWeight: 800, color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--text-primary)' }}>{item.stock}</td>
-                                <td>{item.unit}</td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
+              )}
+
+              {/* Sub-tab Stok: Daftar stok real-time + pencarian */}
+              {barangSubTab === 'stok' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  <div className="glass-card flex-mobile-col" style={{ padding: '0.75rem 1rem' }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Stok Gudang Terkini</h3>
+                    <div className="search-input-wrapper">
+                      <Search size={14} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                      <input
+                        type="text"
+                        placeholder="Cari barang..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="form-input"
+                        style={{ paddingLeft: '2.1rem', minHeight: '34px', fontSize: '0.8rem' }}
+                      />
                     </div>
                   </div>
-                  {/* Kartu Mobile */}
-                  <div className="mobile-card-list">
-                    {filteredInvItems.length === 0 ? (
-                      <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>Tidak ada barang.</div>
-                    ) : (
-                      filteredInvItems.map((item) => (
-                        <div key={item.name} className="mobile-data-card">
-                          <div>
-                            <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{item.name}</h4>
-                            <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>{item.category}</span>
+                  <div className="glass-card" style={{ textAlign: 'left' }}>
+                    {/* Tabel Desktop */}
+                    <div className="desktop-table-view">
+                      <div className="table-container">
+                        <table className="custom-table">
+                          <thead>
+                            <tr>
+                              <th>Nama Barang</th>
+                              <th>Kategori</th>
+                              <th>Stok</th>
+                              <th>Satuan</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredInvItems.length === 0 ? (
+                              <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem' }}>Tidak ada barang.</td></tr>
+                            ) : (
+                              filteredInvItems.map((item) => (
+                                <tr key={item.name}>
+                                  <td style={{ fontWeight: 600 }}>{item.name}</td>
+                                  <td style={{ color: 'var(--text-secondary)' }}>{item.category}</td>
+                                  <td style={{ fontWeight: 800, color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--text-primary)' }}>{item.stock}</td>
+                                  <td>{item.unit}</td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    {/* Kartu Mobile */}
+                    <div className="mobile-card-list">
+                      {filteredInvItems.length === 0 ? (
+                        <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1rem', fontSize: '0.8rem' }}>Tidak ada barang.</div>
+                      ) : (
+                        filteredInvItems.map((item) => (
+                          <div key={item.name} className="mobile-data-card" style={{ padding: '0.65rem 0.85rem' }}>
+                            <div>
+                              <h4 style={{ fontSize: '0.85rem', fontWeight: 700 }}>{item.name}</h4>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{item.category}</span>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <span style={{ fontSize: '0.95rem', fontWeight: 800, color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--primary)' }}>{item.stock}</span>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginLeft: '0.15rem' }}>{item.unit}</span>
+                            </div>
                           </div>
-                          <div style={{ textAlign: 'right' }}>
-                            <span style={{ fontSize: '1.05rem', fontWeight: 800, color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--primary)' }}>{item.stock}</span>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '0.2rem' }}>{item.unit}</span>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-
-
-
-        {activeTab === 'program' && (
-          <ProgramManager
-            programs={programs}
-            onAdd={handleAddProgram}
-            onDelete={handleDeleteProgram}
-            showToast={showToast}
-          />
-        )}
-
-        {activeTab === 'laporan' && (
-          <ReportGenerator 
-            showToast={showToast}
-            updateTrigger={updateTrigger}
-          />
-        )}
-
-        {activeTab === 'pengaturan' && (
-          <SettingsPanel
-            settings={settings}
-            onSave={saveSettings}
-            onReset={resetSettings}
-            onSync={handleSyncToSheets}
-            showToast={showToast}
-          />
-        )}
-      </main>
-
-      {/* Modal Pratinjau Foto Bukti Transaksi */}
-      {activeModalImage && (
-        <ImageModal
-          imageUrl={activeModalImage}
-          onClose={() => setActiveModalImage(null)}
-        />
-      )}
-
-      {/* Toast Floating Notification System */}
-      <div className="toasts-wrapper">
-        {toasts.map((toast) => (
-          <div key={toast.id} className={`toast ${toast.type}`}>
-            <div className="toast-content">
-              {toast.type === 'success' && <CheckCircle2 size={18} style={{ color: 'var(--success)' }} />}
-              {toast.type === 'info' && <Info size={18} style={{ color: 'var(--info)' }} />}
-              {toast.type === 'error' && <AlertCircle size={18} style={{ color: 'var(--danger)' }} />}
-              <span>{toast.message}</span>
+              )}
             </div>
-            <button 
-              onClick={() => removeToast(toast.id)} 
-              className="toast-close"
-              title="Tutup notifikasi"
-            >
-              <X size={15} />
-            </button>
-          </div>
-        ))}
+          )}
+
+          {activeTab === 'program' && (
+            <ProgramManager
+              programs={programs}
+              onAdd={handleAddProgram}
+              onDelete={handleDeleteProgram}
+              showToast={showToast}
+            />
+          )}
+
+          {activeTab === 'laporan' && (
+            <ReportGenerator 
+              showToast={showToast}
+              updateTrigger={updateTrigger}
+            />
+          )}
+
+          {activeTab === 'pengaturan' && (
+            <SettingsPanel
+              settings={settings}
+              onSave={saveSettings}
+              onReset={resetSettings}
+              onSync={handleSyncToSheets}
+              showToast={showToast}
+            />
+          )}
+        </main>
+
+        {/* Modal Pratinjau Foto Bukti Transaksi */}
+        {activeModalImage && (
+          <ImageModal
+            imageUrl={activeModalImage}
+            onClose={() => setActiveModalImage(null)}
+          />
+        )}
+
+        {/* Toast Floating Notification System */}
+        <div className="toasts-wrapper">
+          {toasts.map((toast) => (
+            <div key={toast.id} className={`toast ${toast.type}`}>
+              <div className="toast-content">
+                {toast.type === 'success' && <CheckCircle2 size={16} style={{ color: 'var(--success)' }} />}
+                {toast.type === 'info' && <Info size={16} style={{ color: 'var(--info)' }} />}
+                {toast.type === 'error' && <AlertCircle size={16} style={{ color: 'var(--danger)' }} />}
+                <span>{toast.message}</span>
+              </div>
+              <button 
+                onClick={() => removeToast(toast.id)} 
+                className="toast-close"
+                title="Tutup notifikasi"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

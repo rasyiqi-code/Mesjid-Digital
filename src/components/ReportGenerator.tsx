@@ -453,44 +453,44 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
       
       {/* Panel Form Pilihan Laporan */}
-      <div className="glass-card">
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', textAlign: 'left' }}>
+      <div className="glass-card" style={{ padding: '0.85rem 1rem' }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '0.65rem', textAlign: 'left' }}>
           Pembuatan Laporan Sistem
         </h3>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
           
           {/* Pilih Jenis Laporan */}
-          <div className="form-group">
-            <label className="form-label">Pilih Jenis Laporan</label>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label className="form-label">Jenis Laporan</label>
             <div className="report-select-grid">
               <button
                 onClick={() => { setReportType('kas'); setIsGenerated(false); }}
                 className={`btn ${reportType === 'kas' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ flex: 1, minWidth: '160px', gap: '0.4rem', padding: '0.65rem' }}
+                style={{ flex: 1, minWidth: '120px', gap: '0.3rem', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem', borderRadius: '6px' }}
               >
-                <FileText size={16} />
+                <FileText size={14} />
                 Laporan Kas Bulanan
               </button>
               
               <button
                 onClick={() => { setReportType('stok'); setIsGenerated(false); }}
                 className={`btn ${reportType === 'stok' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ flex: 1, minWidth: '160px', gap: '0.4rem', padding: '0.65rem' }}
+                style={{ flex: 1, minWidth: '120px', gap: '0.3rem', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem', borderRadius: '6px' }}
               >
-                <Calendar size={16} />
+                <Calendar size={14} />
                 Laporan Stok Barang
               </button>
               
               <button
                 onClick={() => { setReportType('inventaris'); setIsGenerated(false); }}
                 className={`btn ${reportType === 'inventaris' ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ flex: 1, minWidth: '160px', gap: '0.4rem', padding: '0.65rem' }}
+                style={{ flex: 1, minWidth: '120px', gap: '0.3rem', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem', borderRadius: '6px' }}
               >
-                <Database size={16} />
+                <Database size={14} />
                 Daftar Inventaris
               </button>
             </div>
@@ -506,6 +506,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                   value={selectedMonth}
                   onChange={(e) => { setSelectedMonth(Number(e.target.value)); setIsGenerated(false); }}
                   className="form-select"
+                  style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                 >
                   {months.map((m, idx) => (
                     <option key={m} value={idx}>{m}</option>
@@ -520,6 +521,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                   value={selectedYear}
                   onChange={(e) => { setSelectedYear(Number(e.target.value)); setIsGenerated(false); }}
                   className="form-select"
+                  style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                 >
                   {years.map((y) => (
                     <option key={y} value={y}>{y}</option>
@@ -533,9 +535,9 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
           <button
             onClick={handleGenerateReport}
             className="btn btn-accent"
-            style={{ width: '100%', padding: '0.8rem', fontWeight: 700 }}
+            style={{ width: '100%', padding: '0.55rem', fontWeight: 700, minHeight: '36px', borderRadius: '6px', marginTop: '0.25rem' }}
           >
-            <Eye size={16} />
+            <Eye size={14} />
             Generate Laporan
           </button>
         </div>
@@ -546,10 +548,10 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
         <div className="glass-card animate-in-fade" style={{ textAlign: 'left' }}>
           
           {/* Header Aksi Ekspor / Berbagi */}
-          <div className="flex-mobile-col" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+          <div className="flex-mobile-col" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.65rem', marginBottom: '0.85rem' }}>
             <div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Pratinjau Hasil Laporan</h4>
-              <p style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700 }}>Pratinjau Hasil Laporan</h4>
+              <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>
                 Tinjau isi dokumen sebelum diekspor atau dibagikan
               </p>
             </div>
@@ -559,29 +561,29 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
               <button
                 onClick={handleExportPDF}
                 className="btn btn-primary"
-                style={{ padding: '0.5rem 0.85rem', fontSize: '0.8rem', gap: '0.4rem' }}
+                style={{ padding: '0.4rem 0.65rem', fontSize: '0.75rem', gap: '0.3rem', minHeight: '32px', borderRadius: '5px' }}
                 title="Ekspor Laporan ke format PDF"
               >
-                <Download size={14} />
+                <Download size={13} />
                 Ekspor PDF
               </button>
               
               <button
                 onClick={handleExportCSV}
                 className="btn btn-secondary"
-                style={{ padding: '0.5rem 0.85rem', fontSize: '0.8rem', gap: '0.4rem' }}
+                style={{ padding: '0.4rem 0.65rem', fontSize: '0.75rem', gap: '0.3rem', minHeight: '32px', borderRadius: '5px' }}
                 title="Ekspor data ke CSV untuk Excel/Google Sheets"
               >
-                <Table size={14} />
+                <Table size={13} />
                 Ekspor CSV
               </button>
               
               <button
                 onClick={handleShareWhatsApp}
                 className="btn btn-secondary"
-                style={{ padding: '0.5rem 0.85rem', fontSize: '0.8rem', gap: '0.4rem', borderColor: '#25D366', color: '#25D366' }}
+                style={{ padding: '0.4rem 0.65rem', fontSize: '0.75rem', gap: '0.3rem', borderColor: '#25D366', color: '#25D366', minHeight: '32px', borderRadius: '5px' }}
               >
-                <Share2 size={14} />
+                <Share2 size={13} />
                 Bagikan ke WA
               </button>
             </div>
@@ -591,8 +593,8 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
           {reportType === 'kas' && reportData.cashSummary && (
             <div className="report-view-box">
               <div className="report-header-print">
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>LAPORAN KAS BULANAN MASJID</h2>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--primary)' }}>LAPORAN KAS BULANAN MASJID</h2>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                   Periode: {months[selectedMonth]} {selectedYear}
                 </p>
               </div>
@@ -600,23 +602,23 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
               <div className="report-meta-grid">
                 <div>
                   <p style={{ color: 'var(--text-secondary)' }}>Saldo Awal Bulan:</p>
-                  <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{formatRupiah(reportData.cashSummary.openingBalance)}</p>
+                  <p style={{ fontSize: '0.95rem', fontWeight: 700 }}>{formatRupiah(reportData.cashSummary.openingBalance)}</p>
                 </div>
                 <div>
                   <p style={{ color: 'var(--text-secondary)' }}>Saldo Akhir Kas:</p>
-                  <p style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--primary)' }}>
+                  <p style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--primary)' }}>
                     {formatRupiah(reportData.cashSummary.closingBalance)}
                   </p>
                 </div>
                 <div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Total Pemasukan: <span style={{ color: '#3B82F6', fontWeight: 600 }}>+{formatRupiah(reportData.cashSummary.totalIncome)}</span></p>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>Total Pemasukan: <span style={{ color: '#3B82F6', fontWeight: 600 }}>+{formatRupiah(reportData.cashSummary.totalIncome)}</span></p>
                 </div>
                 <div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Total Pengeluaran: <span style={{ color: 'var(--accent)', fontWeight: 600 }}>-{formatRupiah(reportData.cashSummary.totalExpense)}</span></p>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>Total Pengeluaran: <span style={{ color: 'var(--accent)', fontWeight: 600 }}>-{formatRupiah(reportData.cashSummary.totalExpense)}</span></p>
                 </div>
               </div>
 
-              <h5 style={{ fontSize: '0.9rem', fontWeight: 700, margin: '1.5rem 0 0.5rem 0', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>
+              <h5 style={{ fontSize: '0.8rem', fontWeight: 700, margin: '0.85rem 0 0.4rem 0', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>
                 Rincian Transaksi
               </h5>
               
@@ -636,7 +638,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                     <tbody>
                       {reportData.cashSummary.transactions.length === 0 ? (
                         <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1rem' }}>
                             Tidak ada data transaksi kas pada periode ini.
                           </td>
                         </tr>
@@ -665,26 +667,26 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
               {/* Tampilan Mobile: Kartu Vertikal */}
               <div className="mobile-card-list">
                 {reportData.cashSummary.transactions.length === 0 ? (
-                  <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
+                  <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1rem', fontSize: '0.85rem' }}>
                     Tidak ada data transaksi kas pada periode ini.
                   </div>
                 ) : (
                   reportData.cashSummary.transactions.map((t) => (
-                    <div key={t.id} className="mobile-data-card" style={{ display: 'block', padding: '0.85rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t.date}</span>
+                    <div key={t.id} className="mobile-data-card" style={{ display: 'block', padding: '0.55rem 0.65rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t.date}</span>
                         <span className={`badge ${t.type === 'pemasukan' ? 'in' : 'out'}`}>
-                          {t.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'}
+                          {t.type === 'pemasukan' ? 'Masuk' : 'Keluar'}
                         </span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{t.category}</h4>
-                          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                          <h4 style={{ fontSize: '0.8rem', fontWeight: 700 }}>{t.category}</h4>
+                          <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>
                             {t.description || '-'}
                           </p>
                         </div>
-                        <div style={{ fontWeight: 800, fontSize: '0.95rem', color: t.type === 'pemasukan' ? 'var(--primary)' : 'var(--danger)' }}>
+                        <div style={{ fontWeight: 800, fontSize: '0.825rem', color: t.type === 'pemasukan' ? 'var(--primary)' : 'var(--danger)' }}>
                           {t.type === 'pemasukan' ? '+' : '-'}{formatRupiah(t.amount)}
                         </div>
                       </div>
@@ -699,8 +701,8 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
           {reportType === 'stok' && reportData.stockSummary && (
             <div className="report-view-box">
               <div className="report-header-print">
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>LAPORAN MUTASI LOGISTIK GUDANG</h2>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--primary)' }}>LAPORAN MUTASI LOGISTIK GUDANG</h2>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                   Periode: {months[selectedMonth]} {selectedYear}
                 </p>
               </div>
@@ -721,7 +723,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                     <tbody>
                       {reportData.stockSummary.transactions.length === 0 ? (
                         <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1rem' }}>
                             Tidak ada transaksi logistik barang pada periode ini.
                           </td>
                         </tr>
@@ -752,26 +754,26 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
               {/* Tampilan Mobile: Kartu Vertikal */}
               <div className="mobile-card-list">
                 {reportData.stockSummary.transactions.length === 0 ? (
-                  <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1.5rem', fontSize: '0.85rem' }}>
+                  <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1rem', fontSize: '0.85rem' }}>
                     Tidak ada transaksi logistik barang pada periode ini.
                   </div>
                 ) : (
                   reportData.stockSummary.transactions.map((t) => (
-                    <div key={t.id} className="mobile-data-card" style={{ display: 'block', padding: '0.85rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t.date}</span>
+                    <div key={t.id} className="mobile-data-card" style={{ display: 'block', padding: '0.55rem 0.65rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t.date}</span>
                         <span className={`badge ${t.type === 'masuk' ? 'in' : 'out'}`}>
-                          {t.type === 'masuk' ? 'Barang Masuk' : 'Barang Keluar'}
+                          {t.type === 'masuk' ? 'Masuk' : 'Keluar'}
                         </span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{t.itemName}</h4>
-                          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                          <h4 style={{ fontSize: '0.8rem', fontWeight: 700 }}>{t.itemName}</h4>
+                          <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>
                             {t.type === 'masuk' ? `Donatur: ${t.donatur || 'Hamba Allah'}` : `Detail: ${t.description || '-'}`}
                           </p>
                         </div>
-                        <div style={{ fontWeight: 800, fontSize: '0.95rem', color: t.type === 'masuk' ? 'var(--primary)' : 'var(--danger)' }}>
+                        <div style={{ fontWeight: 800, fontSize: '0.825rem', color: t.type === 'masuk' ? 'var(--primary)' : 'var(--danger)' }}>
                           {t.type === 'masuk' ? '+' : '-'}{t.amount} {t.unit}
                         </div>
                       </div>
@@ -786,8 +788,8 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
           {reportType === 'inventaris' && reportData.inventoryList && (
             <div className="report-view-box">
               <div className="report-header-print">
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>DAFTAR KONDISI INVENTARIS GUDANG</h2>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--primary)' }}>DAFTAR KONDISI INVENTARIS GUDANG</h2>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                   Status Terkini (Real-Time)
                 </p>
               </div>
@@ -808,7 +810,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                     <tbody>
                       {reportData.inventoryList.items.length === 0 ? (
                         <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
+                          <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1rem' }}>
                             Gudang masjid kosong. Belum ada barang yang didaftarkan.
                           </td>
                         </tr>
@@ -846,11 +848,11 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                   </div>
                 ) : (
                   reportData.inventoryList.items.map((item) => (
-                    <div key={item.name} className="mobile-data-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem' }}>
+                    <div key={item.name} className="mobile-data-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.55rem 0.65rem' }}>
                       <div>
-                        <h4 style={{ fontSize: '0.925rem', fontWeight: 700 }}>{item.name}</h4>
-                        <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>{item.category}</span>
-                        <div style={{ marginTop: '0.25rem' }}>
+                        <h4 style={{ fontSize: '0.8rem', fontWeight: 700 }}>{item.name}</h4>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{item.category}</span>
+                        <div style={{ marginTop: '0.2rem' }}>
                           {item.stock === 0 ? (
                             <span className="badge out" style={{ padding: '0.1rem 0.35rem', fontSize: '0.65rem' }}>Habis</span>
                           ) : item.stock < 10 ? (
@@ -862,13 +864,13 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <span style={{ 
-                          fontSize: '1.05rem', 
+                          fontSize: '0.85rem', 
                           fontWeight: 800, 
                           color: item.stock === 0 ? 'var(--danger)' : item.stock < 10 ? 'var(--accent)' : 'var(--primary)' 
                         }}>
                           {item.stock}
                         </span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '0.2rem' }}>{item.unit}</span>
+                        <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginLeft: '0.2rem' }}>{item.unit}</span>
                       </div>
                     </div>
                   ))

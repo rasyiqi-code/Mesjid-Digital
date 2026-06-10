@@ -44,7 +44,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const outHeight = Math.max((totalOut / maxAmount) * 100, 8);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
       
       {/* 1. Baris Ringkasan Kartu Kas */}
       <div className="dashboard-grid">
@@ -55,8 +55,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <h3 className="stat-value text-glow-primary">{formatRupiah(balance)}</h3>
               <p className="stat-desc">Kas bersih siap digunakan</p>
             </div>
-            <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--primary)', padding: '0.6rem', borderRadius: '10px' }}>
-              <Wallet size={24} />
+            <div style={{ background: 'rgba(16, 185, 129, 0.08)', color: 'var(--primary)', padding: '0.45rem', borderRadius: '8px' }}>
+              <Wallet size={20} />
             </div>
           </div>
         </div>
@@ -68,8 +68,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <h3 className="stat-value" style={{ color: '#3B82F6' }}>{formatRupiah(totalIn)}</h3>
               <p className="stat-desc">Bulan berjalan</p>
             </div>
-            <div style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6', padding: '0.6rem', borderRadius: '10px' }}>
-              <TrendingUp size={24} />
+            <div style={{ background: 'rgba(59, 130, 246, 0.08)', color: '#3B82F6', padding: '0.45rem', borderRadius: '8px' }}>
+              <TrendingUp size={20} />
             </div>
           </div>
         </div>
@@ -81,8 +81,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <h3 className="stat-value" style={{ color: 'var(--accent)' }}>{formatRupiah(totalOut)}</h3>
               <p className="stat-desc">Bulan berjalan</p>
             </div>
-            <div style={{ background: 'rgba(245, 158, 11, 0.1)', color: 'var(--accent)', padding: '0.6rem', borderRadius: '10px' }}>
-              <TrendingDown size={24} />
+            <div style={{ background: 'rgba(245, 158, 11, 0.08)', color: 'var(--accent)', padding: '0.45rem', borderRadius: '8px' }}>
+              <TrendingDown size={20} />
             </div>
           </div>
         </div>
@@ -92,10 +92,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="dashboard-details-grid">
         
         {/* Grafik Kas Kustom */}
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '0.85rem 1rem' }}>
           <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.25rem', textAlign: 'left' }}>Visualisasi Keuangan</h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.5rem', textAlign: 'left' }}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: '0.15rem', textAlign: 'left' }}>Visualisasi Keuangan</h3>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.65rem', textAlign: 'left' }}>
               Perbandingan Pemasukan vs Pengeluaran saat ini
             </p>
           </div>
@@ -125,7 +125,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
             </div>
             
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.75rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.45rem' }}>
               <span>Efisiensi Kas: {totalIn > 0 ? Math.round(((totalIn - totalOut) / totalIn) * 100) : 0}%</span>
               <span style={{ color: balance >= 0 ? 'var(--primary)' : 'var(--danger)' }}>
                 {balance >= 0 ? 'Surplus' : 'Defisit'}
@@ -135,20 +135,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Panel Kanan: Peringatan Stok & Antrean Offline */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
           
           {/* Antrean Sinkronisasi (Hanya muncul jika ada antrean) */}
           {queue.length > 0 && (
-            <div className="glass-card" style={{ borderColor: 'var(--accent)', background: 'rgba(245, 158, 11, 0.03)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: 'var(--accent)' }}>
-                <Clock size={20} />
-                <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>Antrean Sinkronisasi Offline ({queue.length})</h3>
+            <div className="glass-card" style={{ borderColor: 'var(--accent)', background: 'rgba(245, 158, 11, 0.02)', padding: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.45rem', color: 'var(--accent)' }}>
+                <Clock size={16} />
+                <h3 style={{ fontSize: '0.9rem', fontWeight: 800 }}>Antrean Sinkronisasi ({queue.length})</h3>
               </div>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem', textAlign: 'left' }}>
-                Transaksi berikut disimpan di lokal dan akan disinkronkan otomatis saat koneksi pulih.
+              <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginBottom: '0.65rem', textAlign: 'left' }}>
+                Disimpan di lokal dan akan disinkronkan saat koneksi pulih.
               </p>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '180px', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', maxHeight: '120px', overflowY: 'auto' }}>
                 {queue.map((item) => (
                   <div 
                     key={item.id} 
@@ -156,15 +156,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       display: 'flex', 
                       justifyContent: 'space-between', 
                       alignItems: 'center', 
-                      padding: '0.6rem 0.8rem', 
-                      background: 'rgba(255, 255, 255, 0.03)', 
-                      borderRadius: '8px', 
-                      border: '1px solid rgba(245, 158, 11, 0.15)',
-                      fontSize: '0.8rem'
+                      padding: '0.45rem 0.65rem', 
+                      background: 'rgba(255, 255, 255, 0.02)', 
+                      borderRadius: '6px', 
+                      border: '1px solid rgba(245, 158, 11, 0.1)',
+                      fontSize: '0.75rem'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span className={`badge ${item.type === 'cash' ? ((item.data as CashTransaction).type === 'pemasukan' ? 'in' : 'out') : 'in'}`}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span className={`badge ${item.type === 'cash' ? ((item.data as CashTransaction).type === 'pemasukan' ? 'in' : 'out') : 'in'}`} style={{ padding: '0.1rem 0.3rem', fontSize: '0.6rem' }}>
                         {item.type === 'cash' ? 'Uang' : 'Barang'}
                       </span>
                       <span style={{ fontWeight: 600 }}>
@@ -174,7 +174,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         }
                       </span>
                     </div>
-                    <span style={{ color: 'var(--text-secondary)' }}>
+                    <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                       {item.type === 'cash'
                         ? formatRupiah((item.data as CashTransaction).amount)
                         : `${(item.data as InventoryTransaction).amount} ${(item.data as InventoryTransaction).unit}`
@@ -187,14 +187,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
           )}
 
           {/* Alert Stok Kritis */}
-          <div className="glass-card" style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <Package size={20} style={{ color: 'var(--primary)' }} />
-              <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>Inventaris & Stok Kritis</h3>
+          <div className="glass-card" style={{ flex: 1, padding: '0.85rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.65rem' }}>
+              <Package size={16} style={{ color: 'var(--primary)' }} />
+              <h3 style={{ fontSize: '0.9rem', fontWeight: 800 }}>Inventaris & Stok Kritis</h3>
             </div>
             
             {criticalItems.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', maxHeight: '130px', overflowY: 'auto' }}>
                 {criticalItems.map((item) => (
                   <div 
                     key={item.name} 
@@ -202,24 +202,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       display: 'flex', 
                       justifyContent: 'space-between', 
                       alignItems: 'center', 
-                      padding: '0.6rem 0.8rem', 
-                      background: 'rgba(239, 68, 68, 0.05)', 
-                      borderRadius: '8px', 
-                      border: '1px solid rgba(239, 68, 68, 0.15)' 
+                      padding: '0.45rem 0.65rem', 
+                      background: 'rgba(239, 68, 68, 0.03)', 
+                      borderRadius: '6px', 
+                      border: '1px solid rgba(239, 68, 68, 0.1)',
+                      fontSize: '0.75rem'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)' }}>
-                      <AlertTriangle size={15} />
-                      <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>{item.name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--danger)' }}>
+                      <AlertTriangle size={13} />
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{item.name}</span>
                     </div>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--danger)' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--danger)' }}>
                       {item.stock === 0 ? 'Habis' : `${item.stock} ${item.unit}`}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+              <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
                 Semua stok barang di gudang aman (di atas 10 unit).
               </div>
             )}
@@ -227,7 +228,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <button 
               onClick={() => onNavigateToTab('inventaris')}
               className="btn btn-secondary" 
-              style={{ width: '100%', marginTop: '1.25rem', fontSize: '0.8rem', padding: '0.5rem' }}
+              style={{ width: '100%', marginTop: '0.75rem', fontSize: '0.75rem', padding: '0.4rem', minHeight: '32px', borderRadius: '6px' }}
             >
               Lihat Semua Inventaris
             </button>

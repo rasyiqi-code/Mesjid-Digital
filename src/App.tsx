@@ -45,6 +45,7 @@ import {
   PackageCheck,
   CalendarCheck,
   Moon,
+  BookOpen,
 } from 'lucide-react';
 import { CashHistory } from './components/CashHistory';
 import { ImageModal } from './components/ImageModal';
@@ -301,10 +302,18 @@ function App() {
           <button
             onClick={() => setActiveTab('catat_kas')}
             className={`sidebar-btn ${activeTab === 'catat_kas' ? 'active' : ''}`}
-            title="Buku Jurnal Kas"
+            title="Input Transaksi Kas Baru"
           >
             <PlusCircle size={16} />
-            <span>Kas</span>
+            <span>Catat Kas</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('riwayat_kas')}
+            className={`sidebar-btn ${activeTab === 'riwayat_kas' ? 'active' : ''}`}
+            title="Riwayat Buku Kas & Jurnal"
+          >
+            <BookOpen size={16} />
+            <span>Riwayat Kas</span>
           </button>
           <button
             onClick={() => { setActiveTab('catat_barang'); setBarangSubTab('catat'); }}
@@ -347,7 +356,14 @@ function App() {
           className={`mobile-nav-btn ${activeTab === 'catat_kas' ? 'active' : ''}`}
         >
           <PlusCircle size={16} />
-          <span>Kas</span>
+          <span>Catat Kas</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('riwayat_kas')}
+          className={`mobile-nav-btn ${activeTab === 'riwayat_kas' ? 'active' : ''}`}
+        >
+          <BookOpen size={16} />
+          <span>Buku Kas</span>
         </button>
         <button
           onClick={() => { setActiveTab('catat_barang'); setBarangSubTab('catat'); }}
@@ -405,20 +421,23 @@ function App() {
           )}
 
           {activeTab === 'catat_kas' && (
-            <div className="dashboard-details-grid">
+            <div style={{ maxWidth: '600px', margin: '0 auto', width: '100%' }}>
               <CashTransactionForm
                 isOnline={isOnline}
                 onSave={handleSaveCash}
                 showToast={showToast}
                 sheetsConfig={settings.appsScriptUrl ? { url: settings.appsScriptUrl, token: settings.appsScriptToken } : undefined}
               />
-              <div className="glass-card">
-                <CashHistory
-                  cashTransactions={cashHistory}
-                  onDelete={handleDeleteCash}
-                  onViewImage={(url) => setActiveModalImage(url)}
-                />
-              </div>
+            </div>
+          )}
+
+          {activeTab === 'riwayat_kas' && (
+            <div className="glass-card" style={{ textAlign: 'left' }}>
+              <CashHistory
+                cashTransactions={cashHistory}
+                onDelete={handleDeleteCash}
+                onViewImage={(url) => setActiveModalImage(url)}
+              />
             </div>
           )}
 

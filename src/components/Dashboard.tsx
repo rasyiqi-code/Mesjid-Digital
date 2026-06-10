@@ -104,22 +104,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="chart-bars-wrapper">
               {/* Batang Pemasukan */}
               <div className="chart-column">
-                <div 
-                  className="chart-bar-fill" 
-                  style={{ height: `${inHeight}%` }}
-                >
-                  <div className="chart-tooltip">{formatRupiah(totalIn)}</div>
+                <div className="chart-bar-track">
+                  <div 
+                    className="chart-bar-fill" 
+                    style={{ height: `${inHeight}%` }}
+                  >
+                    <div className="chart-tooltip">{formatRupiah(totalIn)}</div>
+                  </div>
                 </div>
                 <span className="chart-label">Pemasukan</span>
               </div>
 
               {/* Batang Pengeluaran */}
               <div className="chart-column">
-                <div 
-                  className="chart-bar-fill expense" 
-                  style={{ height: `${outHeight}%` }}
-                >
-                  <div className="chart-tooltip">{formatRupiah(totalOut)}</div>
+                <div className="chart-bar-track">
+                  <div 
+                    className="chart-bar-fill expense" 
+                    style={{ height: `${outHeight}%` }}
+                  >
+                    <div className="chart-tooltip">{formatRupiah(totalOut)}</div>
+                  </div>
                 </div>
                 <span className="chart-label">Pengeluaran</span>
               </div>

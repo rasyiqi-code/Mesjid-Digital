@@ -850,6 +850,16 @@ body {
   align-items: center;
   flex: 1;
   max-width: 42px;
+  height: 100%;
+}
+
+.chart-bar-track {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
 }
 
 .chart-bar-fill {

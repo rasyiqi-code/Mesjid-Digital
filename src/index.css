@@ -1260,3 +1260,18 @@ body {
     gap: 1.15rem;
   }
 }
+
+/* --- DOCUMENTATION GUIDE GRID --- */
+.documentation-grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .documentation-grid-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}

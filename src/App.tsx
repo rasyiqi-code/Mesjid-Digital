@@ -76,6 +76,8 @@ function App() {
   const [isInventoryDrawerOpen, setIsInventoryDrawerOpen] = useState<boolean>(false);
   // State untuk membuka form program kegiatan
   const [isProgramFormOpen, setIsProgramFormOpen] = useState<boolean>(false);
+  // State untuk melacak sinkronisasi otomatis di latar belakang
+  const [isBackgroundSyncing, setIsBackgroundSyncing] = useState<boolean>(false);
 
   // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
   const { settings, saveSettings, resetSettings, updateLastSynced } = useSettings();
@@ -281,6 +283,49 @@ function App() {
     }
   }, [settings.appsScriptUrl, settings.appsScriptToken, cashHistory, invHistory, programs, showToast, updateLastSynced]);
 
+  // Fungsi sinkronisasi otomatis latar belakang ke Google Sheets (tanpa toast popup)
+  const performBackgroundSync = useCallback(async () => {
+    if (!settings.appsScriptUrl || !settings.appsScriptToken || !settings.isAutoSyncEnabled) return;
+    if (isBackgroundSyncing) return;
+
+    setIsBackgroundSyncing(true);
+    try {
+      const result = await syncAllToSheets(
+        { url: settings.appsScriptUrl, token: settings.appsScriptToken },
+        { kas: cashHistory, barang: invHistory, program: programs }
+      );
+      if (result.ok) {
+        updateLastSynced(Date.now());
+        console.log('Auto-Sinkronisasi latar belakang ke Google Sheets berhasil.');
+      } else {
+        console.warn('Auto-Sinkronisasi latar belakang gagal:', result.error);
+      }
+    } catch (err) {
+      console.error('Error saat Auto-Sinkronisasi latar belakang:', err);
+    } finally {
+      setIsBackgroundSyncing(false);
+    }
+  }, [settings.appsScriptUrl, settings.appsScriptToken, settings.isAutoSyncEnabled, cashHistory, invHistory, programs, updateLastSynced, isBackgroundSyncing]);
+
+  // Effect untuk menjalankan Auto-Sinkronisasi ke Google Sheets secara otomatis setelah ada update data
+  useEffect(() => {
+    if (!settings.isAutoSyncEnabled || !isOnline || !settings.appsScriptUrl || !settings.appsScriptToken) {
+      return;
+    }
+
+    // Hindari eksekusi saat pertama kali komponen dirender
+    if (updateTrigger === 0) return;
+
+    // Debounce sinkronisasi selama 5.5 detik setelah perubahan terakhir
+    const handler = setTimeout(() => {
+      performBackgroundSync();
+    }, 5500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [updateTrigger, isOnline, settings.isAutoSyncEnabled, settings.appsScriptUrl, settings.appsScriptToken, performBackgroundSync]);
+
   // Filter inventaris berdasarkan nama barang pencarian
   const filteredInvItems = invItems.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -390,8 +435,8 @@ function App() {
         {/* Navigasi Atas & Indikator Koneksi */}
         <Navbar
           isOnline={isOnline}
-          isSyncing={isSyncing}
-          syncProgressMsg={syncProgressMsg}
+          isSyncing={isSyncing || isBackgroundSyncing}
+          syncProgressMsg={syncProgressMsg || (isBackgroundSyncing ? 'Auto Syncing...' : undefined)}
           isSimulatedOffline={isSimulatedOffline}
           queueCount={queueCount}
           onToggleSim={toggleConnectionSim}

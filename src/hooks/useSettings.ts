@@ -12,6 +12,7 @@ export interface AppSettings {
   appsScriptUrl: string;          // URL Google Apps Script Web App
   appsScriptToken: string;        // Token keamanan yang sama dengan di Apps Script
   lastSyncedAt: number | null;    // Timestamp sinkronisasi terakhir (ms), null jika belum pernah
+  isAutoSyncEnabled: boolean;     // Status auto-sinkronisasi real-time ke Google Sheets
 }
 
 // Nilai default pengaturan jika belum pernah dikonfigurasi
@@ -24,6 +25,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzHs36-arIW9L0ouFMyaAAG6_HJRMMm10ucEb0BNiuUw00Fgg0sPj6AbS84xl61K-zv/exec',
   appsScriptToken: 'masjid-muttaqin-2026',
   lastSyncedAt: null,
+  isAutoSyncEnabled: false,
 };
 
 

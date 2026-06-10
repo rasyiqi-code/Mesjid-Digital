@@ -61,6 +61,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   // ─── State Form Google Integration ──────────────────────────────────────
   const [appsScriptUrl, setAppsScriptUrl] = useState(settings.appsScriptUrl);
   const [appsScriptToken, setAppsScriptToken] = useState(settings.appsScriptToken);
+  const [isAutoSyncEnabled, setIsAutoSyncEnabled] = useState(settings.isAutoSyncEnabled ?? false);
   const [isGoogleLocked, setIsGoogleLocked] = useState<boolean>(true);
   const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
   const [connStatus, setConnStatus] = useState<ConnectionStatus>('idle');
@@ -85,6 +86,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       appsScriptUrl: appsScriptUrl.trim(),
       appsScriptToken: appsScriptToken.trim(),
       lastSyncedAt: settings.lastSyncedAt,
+      isAutoSyncEnabled,
     });
     showToast('Pengaturan berhasil disimpan.', 'success');
   };
@@ -98,6 +100,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       setCriticalStockThreshold(10);
       setAppsScriptUrl('');
       setAppsScriptToken('');
+      setIsAutoSyncEnabled(false);
       setConnStatus('idle');
       showToast('Pengaturan berhasil direset ke nilai default.', 'info');
     }
@@ -324,6 +327,26 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
                   disabled={isGoogleLocked}
                 />
+              </div>
+
+              {/* Toggle Auto-Sinkronisasi */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem', background: 'rgba(0, 0, 0, 0.02)', padding: '0.65rem 0.75rem', borderRadius: '8px', border: '1px solid var(--border-subtle)', marginBottom: '0.85rem' }}>
+                <input
+                  id="setting-auto-sync"
+                  type="checkbox"
+                  checked={isAutoSyncEnabled}
+                  onChange={(e) => setIsAutoSyncEnabled(e.target.checked)}
+                  style={{ marginTop: '0.2rem', cursor: 'pointer' }}
+                  disabled={isGoogleLocked}
+                />
+                <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                  <label htmlFor="setting-auto-sync" style={{ fontSize: '0.775rem', fontWeight: 700, cursor: 'pointer', color: 'var(--text-primary)' }}>
+                    Aktifkan Auto-Sinkronisasi ke Google Sheets
+                  </label>
+                  <span style={{ fontSize: '0.675rem', color: 'var(--text-secondary)', lineHeight: 1.45, marginTop: '0.15rem' }}>
+                    Mengirimkan seluruh data secara otomatis 5.5 detik setelah ada pencatatan atau perubahan transaksi baru (saat online).
+                  </span>
+                </div>
               </div>
 
               {/* Status hasil test koneksi */}

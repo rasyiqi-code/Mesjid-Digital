@@ -29,44 +29,53 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
   
   // State untuk autocomplete nama barang
   const [existingItems, setExistingItems] = useState<{ name: string; unit: string; category: string }[]>([]);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [currentStock, setCurrentStock] = useState<number>(0);
 
   // Ambil daftar barang yang sudah pernah ada untuk saran pengisian (IndexedDB Asinkron)
   useEffect(() => {
+    let active = true;
     getDBInventoryItems()
       .then((items) => {
+        if (!active) return;
         setExistingItems(items.map(i => ({ name: i.name, unit: i.unit, category: i.category })));
       })
       .catch((err) => {
         console.error('Gagal mengambil daftar barang inventaris:', err);
       });
+    return () => {
+      active = false;
+    };
   }, [updateTrigger, type]);
 
-  // Pantau perubahan nama barang untuk autocomplete dan pengecekan stok
-  useEffect(() => {
-    if (itemName.trim()) {
-      // Autocomplete saran
-      const query = itemName.toLowerCase();
-      const filtered = existingItems
+  // Autocomplete saran (derived state dihitung langsung saat render)
+  const query = itemName.trim().toLowerCase();
+  const filteredSuggestions = query
+    ? existingItems
         .filter(item => item.name.toLowerCase().includes(query) && item.name.toLowerCase() !== query)
-        .map(item => item.name);
-      setFilteredSuggestions(filtered);
+        .map(item => item.name)
+    : [];
 
-      // Cek sisa stok saat ini secara asinkron dari IndexedDB
-      getDBItemStock(itemName)
-        .then((stock) => {
-          setCurrentStock(stock);
-        })
-        .catch(() => {
-          setCurrentStock(0);
-        });
-    } else {
-      setFilteredSuggestions([]);
-      setCurrentStock(0);
-    }
-  }, [itemName, existingItems]);
+  // Pantau perubahan nama barang untuk pengecekan stok secara asinkron
+  useEffect(() => {
+    let active = true;
+    const checkStock = async () => {
+      if (itemName.trim()) {
+        try {
+          const stock = await getDBItemStock(itemName);
+          if (active) setCurrentStock(stock);
+        } catch {
+          if (active) setCurrentStock(0);
+        }
+      } else {
+        if (active) setCurrentStock(0);
+      }
+    };
+    checkStock();
+    return () => {
+      active = false;
+    };
+  }, [itemName]);
 
   const handleSuggestionClick = (name: string) => {
     setItemName(name);

@@ -164,7 +164,10 @@ export const useOfflineSync = (onDataUpdated?: () => void) => {
     window.addEventListener('offline', handleOffline);
     
     // Hitung antrean di awal secara asinkron
-    updateQueueCount();
+    const initQueue = async () => {
+      await updateQueueCount();
+    };
+    initQueue();
 
     return () => {
       window.removeEventListener('online', handleOnline);
@@ -175,7 +178,10 @@ export const useOfflineSync = (onDataUpdated?: () => void) => {
   // Menjalankan sinkronisasi secara otomatis saat status koneksi pulih menjadi Online
   useEffect(() => {
     if (isOnline && queueCount > 0 && !isSyncing) {
-      performSync();
+      const runSync = async () => {
+        await performSync();
+      };
+      runSync();
     }
   }, [isOnline, queueCount, isSyncing, performSync]);
 

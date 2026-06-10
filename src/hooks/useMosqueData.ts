@@ -116,7 +116,15 @@ export const useMosqueData = () => {
 
   // Pantau updateTrigger untuk me-reload data dari DB
   useEffect(() => {
-    loadAllData();
+    let active = true;
+    const fetchData = async () => {
+      if (!active) return;
+      await loadAllData();
+    };
+    fetchData();
+    return () => {
+      active = false;
+    };
   }, [updateTrigger, loadAllData]);
 
   const handleDataUpdated = useCallback(() => {

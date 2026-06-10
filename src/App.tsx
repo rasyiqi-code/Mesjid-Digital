@@ -165,7 +165,7 @@ function App() {
           )}
 
           {activeTab === 'kas' && (
-            <div className="glass-card animate-in-fade" style={{ textAlign: 'left' }}>
+            <div className="glass-card mobile-flat animate-in-fade" style={{ textAlign: 'left' }}>
               <CashHistory
                 cashTransactions={cashHistory}
                 onDelete={handleDeleteCash}
@@ -178,7 +178,7 @@ function App() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               {/* Sub-tab Mutasi: Riwayat mutasi barang saja */}
               {barangSubTab === 'catat' && (
-                <div className="glass-card animate-in-fade">
+                <div className="glass-card mobile-flat animate-in-fade">
                   <InventoryHistory
                     transactions={invHistory}
                     onDelete={handleDeleteInventory}
@@ -189,7 +189,7 @@ function App() {
               {/* Sub-tab Stok: Daftar stok real-time + pencarian */}
               {barangSubTab === 'stok' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                  <div className="glass-card flex-mobile-col" style={{ padding: '0.75rem 1rem' }}>
+                  <div className="glass-card mobile-flat flex-mobile-col" style={{ padding: '0.75rem 1rem' }}>
                     <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Stok Gudang Terkini</h3>
                     <div className="search-input-wrapper">
                       <Search size={14} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
@@ -203,7 +203,7 @@ function App() {
                       />
                     </div>
                   </div>
-                  <div className="glass-card" style={{ textAlign: 'left' }}>
+                  <div className="glass-card mobile-flat" style={{ textAlign: 'left' }}>
                     {/* Tabel Desktop */}
                     <div className="desktop-table-view">
                       <div className="table-container">
@@ -287,7 +287,7 @@ function App() {
           )}
 
           {activeTab === 'tentang' && (
-            <div className="glass-card animate-in-fade" style={{ textAlign: 'left', padding: '1.25rem', maxWidth: '600px', margin: '2rem auto', width: '100%' }}>
+            <div className="glass-card mobile-flat animate-in-fade" style={{ textAlign: 'left', padding: '1.25rem', maxWidth: '600px', margin: '2rem auto', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-subtle)' }}>
                 <div style={{ background: 'rgba(6, 182, 212, 0.08)', color: 'var(--info)', padding: '0.55rem', borderRadius: '10px' }}>
                   <Info size={24} />

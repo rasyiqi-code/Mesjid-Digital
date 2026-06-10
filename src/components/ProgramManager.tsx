@@ -93,7 +93,7 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
 
       {/* Form Tambah Program */}
       {showForm && (
-        <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
+        <div className="glass-card mobile-flat" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
           <h3 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.65rem' }}>Form Tambah Program Kegiatan</h3>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
 

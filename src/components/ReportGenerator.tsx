@@ -456,7 +456,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
       
       {/* Panel Form Pilihan Laporan */}
-      <div className="glass-card" style={{ padding: '0.85rem 1rem' }}>
+      <div className="glass-card mobile-flat" style={{ padding: '0.85rem 1rem' }}>
         <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '0.65rem', textAlign: 'left' }}>
           Pembuatan Laporan Sistem
         </h3>
@@ -545,7 +545,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({ showToast }) =
 
       {/* Tampilan Output Pratinjau Laporan */}
       {isGenerated && (
-        <div className="glass-card animate-in-fade" style={{ textAlign: 'left' }}>
+        <div className="glass-card mobile-flat animate-in-fade" style={{ textAlign: 'left' }}>
           
           {/* Header Aksi Ekspor / Berbagi */}
           <div className="flex-mobile-col" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.65rem', marginBottom: '0.85rem' }}>

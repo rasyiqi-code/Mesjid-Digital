@@ -148,7 +148,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             
             {/* ── Identitas Masjid ─────────────────────────────────────────── */}
-            <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
+            <div className="glass-card mobile-flat" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
               <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <Building2 size={15} style={{ color: 'var(--primary)' }} />
                 Identitas Masjid
@@ -201,7 +201,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </div>
 
             {/* ── Preferensi Sistem ────────────────────────────────────────── */}
-            <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
+            <div className="glass-card mobile-flat" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
               <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <AlertTriangle size={15} style={{ color: 'var(--accent)' }} />
                 Preferensi Sistem
@@ -226,7 +226,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </div>
 
             {/* ── Keamanan Admin ───────────────────────────────────────────── */}
-            <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
+            <div className="glass-card mobile-flat" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
               <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <KeyRound size={15} style={{ color: 'var(--primary)' }} />
                 Keamanan Admin
@@ -265,7 +265,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             
             {/* ── Integrasi Google ─────────────────────────────────────────── */}
-            <div className="glass-card" style={{ textAlign: 'left', borderColor: 'rgba(66, 133, 244, 0.2)', padding: '0.85rem 1rem' }}>
+            <div className="glass-card mobile-flat" style={{ textAlign: 'left', borderColor: 'rgba(66, 133, 244, 0.2)', padding: '0.85rem 1rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem', flexWrap: 'wrap', gap: '0.45rem' }}>
                 <h3 style={{ fontSize: '0.9rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <Wifi size={15} style={{ color: '#4285f4' }} />

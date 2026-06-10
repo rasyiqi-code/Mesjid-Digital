@@ -66,6 +66,11 @@ export const useMosqueData = () => {
     return sessionStorage.getItem('mesjid_digital_is_admin') === 'true';
   });
 
+  // State verifikasi pengunjung (tamu) berdasarkan nama masjid
+  const [isGuestAuthenticated, setIsGuestAuthenticated] = useState<boolean>(() => {
+    return sessionStorage.getItem('mesjid_digital_is_guest_authenticated') === 'true';
+  });
+
   // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
   const { settings, saveSettings, resetSettings, updateLastSynced } = useSettings();
 
@@ -138,6 +143,18 @@ export const useMosqueData = () => {
       setIsAdmin(true);
       sessionStorage.setItem('mesjid_digital_is_admin', 'true');
       showToast('Verifikasi sukses. Anda masuk sebagai Admin.', 'success');
+      return true;
+    }
+    return false;
+  };
+
+  // Handler akses pengunjung (tamu) berdasarkan nama masjid
+  const handleGuestAccess = (enteredName: string): boolean => {
+    const isMatch = enteredName.trim().toLowerCase() === settings.mosqueName.trim().toLowerCase();
+    if (isMatch) {
+      setIsGuestAuthenticated(true);
+      sessionStorage.setItem('mesjid_digital_is_guest_authenticated', 'true');
+      showToast('Akses masuk disetujui. Anda masuk dalam Mode Lihat-Saja.', 'success');
       return true;
     }
     return false;
@@ -374,6 +391,7 @@ export const useMosqueData = () => {
     activeModalImage,
     setActiveModalImage,
     isAdmin,
+    isGuestAuthenticated,
     isOnline,
     isSyncing: isSyncing || isBackgroundSyncing,
     syncProgressMsg: syncProgressMsg || (isBackgroundSyncing ? 'Auto Syncing...' : undefined),
@@ -394,6 +412,7 @@ export const useMosqueData = () => {
 
     // Handlers
     handleLoginAdmin,
+    handleGuestAccess,
     handleResetAdminPassword,
     handleLogoutAdmin,
     handleSaveCash,

@@ -2,6 +2,7 @@ import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
 import { AdminLoginLayout } from './components/AdminLoginLayout';
+import { GatekeeperLayout } from './components/GatekeeperLayout';
 import { Dashboard } from './components/Dashboard';
 import { CashHistory } from './components/CashHistory';
 import { ImageModal } from './components/ImageModal';
@@ -38,6 +39,7 @@ function App() {
     activeModalImage,
     setActiveModalImage,
     isAdmin,
+    isGuestAuthenticated,
     isOnline,
     isSyncing,
     syncProgressMsg,
@@ -56,6 +58,7 @@ function App() {
 
     // Handlers
     handleLoginAdmin,
+    handleGuestAccess,
     handleResetAdminPassword,
     handleLogoutAdmin,
     handleSaveCash,
@@ -71,6 +74,18 @@ function App() {
     saveSettings,
     resetSettings
   } = useMosqueData();
+
+  // Render Pintu Gerbang Utama (Tembok Readonly) jika belum terverifikasi (tamu maupun admin)
+  if (!isAdmin && !isGuestAuthenticated) {
+    return (
+      <GatekeeperLayout 
+        mosqueName={settings.mosqueName}
+        onGuestAccess={handleGuestAccess}
+        onAdminLogin={handleLoginAdmin}
+        onResetPassword={handleResetAdminPassword}
+      />
+    );
+  }
 
   // Render Halaman Login Penuh (Fullscreen) tanpa header dan sidebar jika bukan Admin
   if (activeTab === 'pengaturan' && !isAdmin) {

@@ -44,12 +44,15 @@ import {
   CalendarCheck,
   Moon,
   BookOpen,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 import { CashHistory } from './components/CashHistory';
 import { ImageModal } from './components/ImageModal';
 import { InventoryHistory } from './components/InventoryHistory';
 import { ProgramManager } from './components/ProgramManager';
 import { SettingsPanel } from './components/SettingsPanel';
+import { AdminLoginForm } from './components/AdminLoginForm';
 
 function App() {
   // State pemicu pembaruan UI lintas komponen
@@ -78,9 +81,34 @@ function App() {
   const [isProgramFormOpen, setIsProgramFormOpen] = useState<boolean>(false);
   // State untuk melacak sinkronisasi otomatis di latar belakang
   const [isBackgroundSyncing, setIsBackgroundSyncing] = useState<boolean>(false);
+  // State autentikasi mode admin
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    return sessionStorage.getItem('mesjid_digital_is_admin') === 'true';
+  });
 
   // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
   const { settings, saveSettings, resetSettings, updateLastSynced } = useSettings();
+
+  // Handler login admin secara lokal
+  const handleLoginAdmin = (password: string): boolean => {
+    if (password === settings.adminPassword) {
+      setIsAdmin(true);
+      sessionStorage.setItem('mesjid_digital_is_admin', 'true');
+      showToast('Verifikasi sukses. Anda masuk sebagai Admin.', 'success');
+      return true;
+    }
+    return false;
+  };
+
+  // Handler logout admin
+  const handleLogoutAdmin = () => {
+    setIsAdmin(false);
+    sessionStorage.removeItem('mesjid_digital_is_admin');
+    if (activeTab === 'pengaturan') {
+      setActiveTab('dashboard');
+    }
+    showToast('Anda telah keluar dari Mode Admin.', 'info');
+  };
 
   // Mengambil seluruh data asinkron dari IndexedDB secara terpusat
   const loadAllData = useCallback(async () => {
@@ -388,6 +416,21 @@ function App() {
             <Info size={16} />
             <span>Tentang</span>
           </button>
+          <div style={{ flex: 1 }}></div>
+          <button
+            onClick={isAdmin ? handleLogoutAdmin : () => setActiveTab('pengaturan')}
+            className="sidebar-btn"
+            style={{ 
+              marginTop: 'auto', 
+              borderTop: '1px solid var(--border-subtle)', 
+              paddingTop: '0.85rem',
+              color: isAdmin ? 'var(--danger)' : 'var(--primary)'
+            }}
+            title={isAdmin ? "Keluar Mode Admin" : "Masuk Mode Admin"}
+          >
+            {isAdmin ? <LogOut size={16} /> : <LogIn size={16} />}
+            <span>{isAdmin ? 'Logout Admin' : 'Login Admin'}</span>
+          </button>
         </nav>
       </aside>
 
@@ -451,6 +494,7 @@ function App() {
           isProgramFormOpen={isProgramFormOpen}
           onToggleProgramForm={() => setIsProgramFormOpen(!isProgramFormOpen)}
           programCount={programs.length}
+          isAdmin={isAdmin}
         />
 
         <main style={{ minHeight: '60vh' }} className="animate-in-fade">
@@ -467,6 +511,7 @@ function App() {
               cashSummary={cashSummary}
               queue={queueList}
               criticalItems={criticalItems}
+              isAdmin={isAdmin}
             />
           )}
 
@@ -583,13 +628,17 @@ function App() {
           )}
 
           {activeTab === 'pengaturan' && (
-            <SettingsPanel
-              settings={settings}
-              onSave={saveSettings}
-              onReset={resetSettings}
-              onSync={handleSyncToSheets}
-              showToast={showToast}
-            />
+            isAdmin ? (
+              <SettingsPanel
+                settings={settings}
+                onSave={saveSettings}
+                onReset={resetSettings}
+                onSync={handleSyncToSheets}
+                showToast={showToast}
+              />
+            ) : (
+              <AdminLoginForm onLogin={handleLoginAdmin} />
+            )
           )}
 
           {activeTab === 'tentang' && (

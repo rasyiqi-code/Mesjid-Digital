@@ -19,6 +19,7 @@ interface NavbarProps {
   isProgramFormOpen?: boolean;
   onToggleProgramForm?: () => void;
   programCount?: number;
+  isAdmin: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -39,6 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   isProgramFormOpen,
   onToggleProgramForm,
   programCount = 0,
+  isAdmin,
 }) => {
   // Dapatkan informasi halaman dinamis secara modular
   const getPageInfo = () => {
@@ -160,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
 
           {/* Tombol Aksi Halaman Kas (Tambah Transaksi) */}
-          {activeTab === 'kas' && onOpenCashDrawer && (
+          {activeTab === 'kas' && onOpenCashDrawer && isAdmin && (
             <button
               onClick={onOpenCashDrawer}
               className="btn btn-primary"
@@ -172,7 +174,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
 
           {/* Tombol Aksi Halaman Barang (Catat Mutasi) */}
-          {activeTab === 'catat_barang' && barangSubTab === 'catat' && onOpenInventoryDrawer && (
+          {activeTab === 'catat_barang' && barangSubTab === 'catat' && onOpenInventoryDrawer && isAdmin && (
             <button
               onClick={onOpenInventoryDrawer}
               className="btn btn-primary"
@@ -184,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
 
           {/* Tombol Aksi Halaman Program (Tambah/Tutup Program) */}
-          {activeTab === 'program' && onToggleProgramForm && (
+          {activeTab === 'program' && onToggleProgramForm && isAdmin && (
             <button
               onClick={onToggleProgramForm}
               className={`btn ${isProgramFormOpen ? 'btn-secondary' : 'btn-primary'}`}
@@ -201,11 +203,23 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Panel status jaringan & pengaturan */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             
-            {/* Indikator Online/Offline */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <div className={`status-badge ${isOnline ? 'online' : 'offline'}`} style={{ padding: '0.2rem 0.45rem', fontSize: '0.625rem', minHeight: '22px' }}>
-                <span className={`status-dot ${isOnline ? 'online' : 'offline'}`} style={{ width: '4px', height: '4px' }}></span>
-                {isOnline ? 'Online' : 'Offline'}
+            {/* Indikator Online/Offline & Status Peran */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem' }}>
+              <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
+                {!isAdmin && (
+                  <div className="status-badge" style={{ padding: '0.2rem 0.45rem', fontSize: '0.625rem', minHeight: '22px', background: 'rgba(245, 158, 11, 0.08)', color: 'var(--accent)', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
+                    Lihat-Saja
+                  </div>
+                )}
+                {isAdmin && (
+                  <div className="status-badge" style={{ padding: '0.2rem 0.45rem', fontSize: '0.625rem', minHeight: '22px', background: 'rgba(16, 185, 129, 0.08)', color: 'var(--primary)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                    Admin
+                  </div>
+                )}
+                <div className={`status-badge ${isOnline ? 'online' : 'offline'}`} style={{ padding: '0.2rem 0.45rem', fontSize: '0.625rem', minHeight: '22px' }}>
+                  <span className={`status-dot ${isOnline ? 'online' : 'offline'}`} style={{ width: '4px', height: '4px' }}></span>
+                  {isOnline ? 'Online' : 'Offline'}
+                </div>
               </div>
               {isSyncing && syncProgressMsg && (
                 <span style={{ 

@@ -13,6 +13,7 @@ export interface AppSettings {
   appsScriptToken: string;        // Token keamanan yang sama dengan di Apps Script
   lastSyncedAt: number | null;    // Timestamp sinkronisasi terakhir (ms), null jika belum pernah
   isAutoSyncEnabled: boolean;     // Status auto-sinkronisasi real-time ke Google Sheets
+  adminPassword: string;          // Kata sandi admin untuk autentikasi (default: 'admin123')
 }
 
 // Nilai default pengaturan jika belum pernah dikonfigurasi
@@ -26,6 +27,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   appsScriptToken: 'masjid-muttaqin-2026',
   lastSyncedAt: null,
   isAutoSyncEnabled: false,
+  adminPassword: 'admin123',
 };
 
 

@@ -19,13 +19,15 @@ interface DashboardProps {
   cashSummary: { totalIn: number; totalOut: number; balance: number };
   queue: SyncQueueItem[];
   criticalItems: InventoryItem[];
+  isAdmin: boolean;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ 
   onNavigateToTab, 
   cashSummary,
   queue,
-  criticalItems
+  criticalItems,
+  isAdmin
 }) => {
   const { totalIn, totalOut, balance } = cashSummary;
 
@@ -46,6 +48,29 @@ export const Dashboard: React.FC<DashboardProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
       
+      {/* Banner Mode Lihat-Saja (Tampil jika bukan admin) */}
+      {!isAdmin && (
+        <div 
+          className="glass-card animate-in-fade" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '0.45rem', 
+            padding: '0.55rem 0.85rem', 
+            background: 'rgba(245, 158, 11, 0.04)', 
+            border: '1px solid rgba(245, 158, 11, 0.15)',
+            color: 'var(--accent)',
+            fontSize: '0.75rem',
+            textAlign: 'center',
+            fontWeight: 600
+          }}
+        >
+          <AlertTriangle size={14} style={{ flexShrink: 0 }} />
+          <span>Anda sedang dalam Mode Lihat-Saja (Tamu). Silakan login admin melalui menu Pengaturan untuk memasukkan data kas, barang, dan program.</span>
+        </div>
+      )}
+
       {/* 1. Baris Ringkasan Kartu Kas */}
       <div className="dashboard-grid">
         <div className="glass-card stat-card balance">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Moon, Wifi, WifiOff, RefreshCw, Settings2, PackageCheck, FolderOpen, PlusCircle } from 'lucide-react';
+import { Moon, Wifi, WifiOff, RefreshCw, Settings2, PackageCheck, FolderOpen, PlusCircle, ChevronUp } from 'lucide-react';
 
 interface NavbarProps {
   isOnline: boolean;
@@ -16,6 +16,9 @@ interface NavbarProps {
   barangSubTab?: 'catat' | 'stok';
   setBarangSubTab?: (tab: 'catat' | 'stok') => void;
   onOpenInventoryDrawer?: () => void;
+  isProgramFormOpen?: boolean;
+  onToggleProgramForm?: () => void;
+  programCount?: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -33,6 +36,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   setBarangSubTab,
   onOpenInventoryDrawer,
   onOpenCashDrawer,
+  isProgramFormOpen,
+  onToggleProgramForm,
+  programCount = 0,
 }) => {
   // Dapatkan informasi halaman dinamis secara modular
   const getPageInfo = () => {
@@ -55,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       case 'program':
         return {
           title: 'Program & Kegiatan',
-          desc: 'Manajemen acara rutin & program DKM'
+          desc: `${programCount} kegiatan terdaftar`
         };
       case 'laporan':
         return {
@@ -169,6 +175,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <PlusCircle size={13} />
               <span>Catat Mutasi</span>
+            </button>
+          )}
+
+          {/* Tombol Aksi Halaman Program (Tambah/Tutup Program) */}
+          {activeTab === 'program' && onToggleProgramForm && (
+            <button
+              onClick={onToggleProgramForm}
+              className={`btn ${isProgramFormOpen ? 'btn-secondary' : 'btn-primary'}`}
+              style={{ gap: '0.3rem', padding: '0.35rem 0.75rem', fontSize: '0.75rem', minHeight: '32px', borderRadius: '6px' }}
+            >
+              {isProgramFormOpen ? <ChevronUp size={13} /> : <PlusCircle size={13} />}
+              <span>{isProgramFormOpen ? 'Tutup Form' : 'Tambah Program'}</span>
             </button>
           )}
 

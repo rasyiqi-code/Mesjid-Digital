@@ -74,6 +74,8 @@ function App() {
   const [isCashDrawerOpen, setIsCashDrawerOpen] = useState<boolean>(false);
   // State untuk meluncurkan drawer formulir mutasi barang
   const [isInventoryDrawerOpen, setIsInventoryDrawerOpen] = useState<boolean>(false);
+  // State untuk membuka form program kegiatan
+  const [isProgramFormOpen, setIsProgramFormOpen] = useState<boolean>(false);
 
   // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
   const { settings, saveSettings, resetSettings, updateLastSynced } = useSettings();
@@ -393,6 +395,9 @@ function App() {
           setBarangSubTab={setBarangSubTab}
           onOpenCashDrawer={() => setIsCashDrawerOpen(true)}
           onOpenInventoryDrawer={() => setIsInventoryDrawerOpen(true)}
+          isProgramFormOpen={isProgramFormOpen}
+          onToggleProgramForm={() => setIsProgramFormOpen(!isProgramFormOpen)}
+          programCount={programs.length}
         />
 
         <main style={{ minHeight: '60vh' }} className="animate-in-fade">
@@ -512,6 +517,8 @@ function App() {
               onAdd={handleAddProgram}
               onDelete={handleDeleteProgram}
               showToast={showToast}
+              showForm={isProgramFormOpen}
+              setShowForm={setIsProgramFormOpen}
             />
           )}
 

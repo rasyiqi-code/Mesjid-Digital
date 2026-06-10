@@ -9,7 +9,6 @@ import {
   User,
   RefreshCw,
   ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
 
 interface ProgramManagerProps {
@@ -17,6 +16,8 @@ interface ProgramManagerProps {
   onAdd: (program: MosqueProgram) => void;
   onDelete: (id: string) => void;
   showToast: (msg: string, type: 'success' | 'info' | 'error') => void;
+  showForm: boolean;
+  setShowForm: (show: boolean) => void;
 }
 
 // Nama hari untuk dropdown pemilihan hari rutin
@@ -35,9 +36,10 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
   onAdd,
   onDelete,
   showToast,
+  showForm,
+  setShowForm,
 }) => {
   // State form tambah program
-  const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [time, setTime] = useState('07:00');
   const [location, setLocation] = useState('');
@@ -88,29 +90,6 @@ export const ProgramManager: React.FC<ProgramManagerProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
 
-      {/* Header dengan tombol tambah */}
-      <div className="glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.65rem', padding: '0.75rem 1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{ background: 'rgba(16, 185, 129, 0.08)', color: 'var(--primary)', padding: '0.55rem', borderRadius: '8px' }}>
-            <CalendarCheck size={20} />
-          </div>
-          <div style={{ textAlign: 'left' }}>
-            <h2 style={{ fontSize: '0.95rem', fontWeight: 800 }}>Program Masjid</h2>
-            <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)' }}>
-              {programs.length} kegiatan terdaftar
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowForm(!showForm)}
-          className="btn btn-primary"
-          style={{ padding: '0.45rem 0.85rem', gap: '0.3', minHeight: '34px', fontSize: '0.8rem', borderRadius: '6px' }}
-        >
-          {showForm ? <ChevronUp size={14} /> : <PlusCircle size={14} />}
-          {showForm ? 'Tutup Form' : 'Tambah Program'}
-        </button>
-      </div>
 
       {/* Form Tambah Program */}
       {showForm && (

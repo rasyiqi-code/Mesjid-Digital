@@ -134,7 +134,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', width: '100%' }}>
 
       <form onSubmit={handleSubmit} style={{ width: '100%' }}>
         <div className="settings-grid-container">

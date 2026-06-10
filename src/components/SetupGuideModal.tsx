@@ -30,7 +30,7 @@ export const SetupGuideModal: React.FC<SetupGuideModalProps> = ({ onClose }) => 
         style={{ 
           backgroundColor: 'rgba(255, 255, 255, 0.98)', 
           width: '100%', 
-          maxWidth: '1150px', 
+          maxWidth: '100%', 
           maxHeight: '90vh', 
           overflowY: 'auto', 
           borderRadius: '16px', 

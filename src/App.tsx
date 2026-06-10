@@ -72,6 +72,8 @@ function App() {
   const [activeModalImage, setActiveModalImage] = useState<string | null>(null);
   // Sub-tab di dalam tab Barang: 'catat' = form input, 'stok' = daftar stok gudang
   const [barangSubTab, setBarangSubTab] = useState<'catat' | 'stok'>('catat');
+  // State untuk meluncurkan drawer formulir transaksi kas
+  const [isCashDrawerOpen, setIsCashDrawerOpen] = useState<boolean>(false);
 
   // Hook pengaturan aplikasi (nama masjid, DKM, dll) via localStorage
   const { settings, saveSettings, resetSettings, updateLastSynced } = useSettings();
@@ -300,20 +302,12 @@ function App() {
             <span>Dashboard</span>
           </button>
           <button
-            onClick={() => setActiveTab('catat_kas')}
-            className={`sidebar-btn ${activeTab === 'catat_kas' ? 'active' : ''}`}
-            title="Input Transaksi Kas Baru"
-          >
-            <PlusCircle size={16} />
-            <span>Catat Kas</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('riwayat_kas')}
-            className={`sidebar-btn ${activeTab === 'riwayat_kas' ? 'active' : ''}`}
-            title="Riwayat Buku Kas & Jurnal"
+            onClick={() => setActiveTab('kas')}
+            className={`sidebar-btn ${activeTab === 'kas' ? 'active' : ''}`}
+            title="Buku Jurnal Kas Masjid"
           >
             <BookOpen size={16} />
-            <span>Riwayat Kas</span>
+            <span>Kas</span>
           </button>
           <button
             onClick={() => { setActiveTab('catat_barang'); setBarangSubTab('catat'); }}
@@ -352,18 +346,11 @@ function App() {
           <span>Dashboard</span>
         </button>
         <button
-          onClick={() => setActiveTab('catat_kas')}
-          className={`mobile-nav-btn ${activeTab === 'catat_kas' ? 'active' : ''}`}
-        >
-          <PlusCircle size={16} />
-          <span>Catat Kas</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('riwayat_kas')}
-          className={`mobile-nav-btn ${activeTab === 'riwayat_kas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('kas')}
+          className={`mobile-nav-btn ${activeTab === 'kas' ? 'active' : ''}`}
         >
           <BookOpen size={16} />
-          <span>Buku Kas</span>
+          <span>Kas</span>
         </button>
         <button
           onClick={() => { setActiveTab('catat_barang'); setBarangSubTab('catat'); }}
@@ -420,24 +407,33 @@ function App() {
             />
           )}
 
-          {activeTab === 'catat_kas' && (
-            <div style={{ maxWidth: '600px', margin: '0 auto', width: '100%' }}>
-              <CashTransactionForm
-                isOnline={isOnline}
-                onSave={handleSaveCash}
-                showToast={showToast}
-                sheetsConfig={settings.appsScriptUrl ? { url: settings.appsScriptUrl, token: settings.appsScriptToken } : undefined}
-              />
-            </div>
-          )}
+          {activeTab === 'kas' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              {/* Header Buku Kas & Tombol Tambah Aksi */}
+              <div className="glass-card flex-mobile-col" style={{ padding: '0.75rem 1rem' }}>
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Buku Jurnal Kas Masjid</h3>
+                  <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                    Daftar pemasukan dan pengeluaran keuangan real-time
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsCashDrawerOpen(true)}
+                  className="btn btn-primary"
+                  style={{ gap: '0.35rem', padding: '0.45rem 0.85rem', fontSize: '0.8rem', minHeight: '34px', borderRadius: '6px' }}
+                >
+                  <PlusCircle size={15} />
+                  Tambah Transaksi
+                </button>
+              </div>
 
-          {activeTab === 'riwayat_kas' && (
-            <div className="glass-card" style={{ textAlign: 'left' }}>
-              <CashHistory
-                cashTransactions={cashHistory}
-                onDelete={handleDeleteCash}
-                onViewImage={(url) => setActiveModalImage(url)}
-              />
+              <div className="glass-card" style={{ textAlign: 'left' }}>
+                <CashHistory
+                  cashTransactions={cashHistory}
+                  onDelete={handleDeleteCash}
+                  onViewImage={(url) => setActiveModalImage(url)}
+                />
+              </div>
             </div>
           )}
 
@@ -605,6 +601,34 @@ function App() {
               </button>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Drawer Formulir Transaksi Kas */}
+      {isCashDrawerOpen && (
+        <div className="drawer-overlay" onClick={() => setIsCashDrawerOpen(false)} />
+      )}
+      <div className={`drawer ${isCashDrawerOpen ? 'open' : ''}`}>
+        <div className="drawer-header">
+          <h3 className="drawer-title">Tambah Transaksi Kas</h3>
+          <button 
+            onClick={() => setIsCashDrawerOpen(false)} 
+            className="drawer-close"
+            title="Tutup panel"
+          >
+            <X size={16} />
+          </button>
+        </div>
+        <div className="drawer-body">
+          <CashTransactionForm
+            isOnline={isOnline}
+            onSave={async (data) => {
+              await handleSaveCash(data);
+              setIsCashDrawerOpen(false); // Otomatis tutup drawer setelah berhasil menyimpan
+            }}
+            showToast={showToast}
+            sheetsConfig={settings.appsScriptUrl ? { url: settings.appsScriptUrl, token: settings.appsScriptToken } : undefined}
+          />
         </div>
       </div>
     </div>

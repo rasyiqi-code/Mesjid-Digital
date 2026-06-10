@@ -1233,3 +1233,15 @@ body {
     opacity: 1;
   }
 }
+
+/* --- HELPER RESPONSIVE --- */
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+}

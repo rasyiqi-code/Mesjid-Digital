@@ -34,7 +34,6 @@ import type {
 } from './utils/storage';
 import { 
   LayoutDashboard, 
-  PlusCircle, 
   FileText, 
   Info, 
   CheckCircle2, 
@@ -392,6 +391,8 @@ function App() {
           activeTab={activeTab}
           barangSubTab={barangSubTab}
           setBarangSubTab={setBarangSubTab}
+          onOpenCashDrawer={() => setIsCashDrawerOpen(true)}
+          onOpenInventoryDrawer={() => setIsInventoryDrawerOpen(true)}
         />
 
         <main style={{ minHeight: '60vh' }} className="animate-in-fade">
@@ -412,66 +413,20 @@ function App() {
           )}
 
           {activeTab === 'kas' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              {/* Header Buku Kas & Tombol Tambah Aksi */}
-              <div className="glass-card flex-mobile-col" style={{ padding: '0.75rem 1rem' }}>
-                <div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Buku Jurnal Kas Masjid</h3>
-                  <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-                    Daftar pemasukan dan pengeluaran keuangan real-time
-                  </p>
-                </div>
-                <button
-                  onClick={() => setIsCashDrawerOpen(true)}
-                  className="btn btn-primary"
-                  style={{ gap: '0.35rem', padding: '0.45rem 0.85rem', fontSize: '0.8rem', minHeight: '34px', borderRadius: '6px' }}
-                >
-                  <PlusCircle size={15} />
-                  Tambah Transaksi
-                </button>
-              </div>
-
-              <div className="glass-card" style={{ textAlign: 'left' }}>
-                <CashHistory
-                  cashTransactions={cashHistory}
-                  onDelete={handleDeleteCash}
-                  onViewImage={(url) => setActiveModalImage(url)}
-                />
-              </div>
+            <div className="glass-card animate-in-fade" style={{ textAlign: 'left' }}>
+              <CashHistory
+                cashTransactions={cashHistory}
+                onDelete={handleDeleteCash}
+                onViewImage={(url) => setActiveModalImage(url)}
+              />
             </div>
           )}
 
           {activeTab === 'catat_barang' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              {/* Header Halaman Barang & Pilihan Sub-Tab */}
-              <div className="glass-card flex-mobile-col" style={{ padding: '0.75rem 1rem', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '0.85rem' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Inventaris & Logistik Gudang</h3>
-                    <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-                      Kelola persediaan barang dan mutasi logistik masjid
-                    </p>
-                  </div>
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                    {/* Tombol Catat Mutasi (Hanya muncul jika sub-tab Mutasi aktif) */}
-                    {barangSubTab === 'catat' && (
-                      <button
-                        onClick={() => setIsInventoryDrawerOpen(true)}
-                        className="btn btn-primary"
-                        style={{ gap: '0.35rem', padding: '0.45rem 0.85rem', fontSize: '0.8rem', minHeight: '34px', borderRadius: '6px' }}
-                      >
-                        <PlusCircle size={15} />
-                        Catat Mutasi
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
               {/* Sub-tab Mutasi: Riwayat mutasi barang saja */}
               {barangSubTab === 'catat' && (
-                <div className="glass-card">
+                <div className="glass-card animate-in-fade">
                   <InventoryHistory
                     transactions={invHistory}
                     onDelete={handleDeleteInventory}

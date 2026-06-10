@@ -156,13 +156,12 @@ export const GatekeeperLayout: React.FC<GatekeeperLayoutProps> = ({
 
               <form onSubmit={handleGuestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} noValidate>
                 <div className="form-group" style={{ textAlign: 'left', marginBottom: 0 }}>
-                  <label className="form-label" htmlFor="gate-guest-name">Nama Masjid</label>
                   <input
                     id="gate-guest-name"
                     type="text"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    placeholder={`Contoh: ${mosqueName}`}
+                    placeholder="Nama Masjid"
                     className="form-input"
                     style={{ minHeight: '38px', fontSize: '0.85rem' }}
                     required

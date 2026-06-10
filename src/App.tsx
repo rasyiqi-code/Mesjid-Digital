@@ -61,6 +61,7 @@ function App() {
     handleGuestAccess,
     handleResetAdminPassword,
     handleLogoutAdmin,
+    handleLogoutGuest,
     handleSaveCash,
     handleSaveInventory,
     handleDeleteCash,
@@ -108,6 +109,7 @@ function App() {
         setBarangSubTab={setBarangSubTab}
         isAdmin={isAdmin}
         onLogoutAdmin={handleLogoutAdmin}
+        onLogoutGuest={handleLogoutGuest}
         mosqueName={settings.mosqueName}
       />
 
@@ -140,6 +142,8 @@ function App() {
           onToggleProgramForm={() => setIsProgramFormOpen(!isProgramFormOpen)}
           programCount={programs.length}
           isAdmin={isAdmin}
+          onLogoutAdmin={handleLogoutAdmin}
+          onLogoutGuest={handleLogoutGuest}
         />
 
         <main style={{ minHeight: '60vh' }} className="animate-in-fade">

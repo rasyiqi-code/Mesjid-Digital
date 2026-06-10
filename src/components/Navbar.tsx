@@ -1,5 +1,5 @@
 import React from 'react';
-import { Moon, Wifi, WifiOff, RefreshCw, Settings2, PackageCheck, FolderOpen, PlusCircle, ChevronUp } from 'lucide-react';
+import { Moon, Wifi, WifiOff, RefreshCw, Settings2, PackageCheck, FolderOpen, PlusCircle, ChevronUp, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   isOnline: boolean;
@@ -20,6 +20,8 @@ interface NavbarProps {
   onToggleProgramForm?: () => void;
   programCount?: number;
   isAdmin: boolean;
+  onLogoutAdmin: () => void;
+  onLogoutGuest: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -41,6 +43,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleProgramForm,
   programCount = 0,
   isAdmin,
+  onLogoutAdmin,
+  onLogoutGuest,
 }) => {
   // Dapatkan informasi halaman dinamis secara modular
   const getPageInfo = () => {
@@ -270,6 +274,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label="Pengaturan"
             >
               <Settings2 size={12} />
+            </button>
+
+            {/* Tombol Keluar (Sesi) */}
+            <button
+              onClick={isAdmin ? onLogoutAdmin : onLogoutGuest}
+              className="btn btn-secondary hover-danger-btn"
+              style={{ padding: '0.25rem 0.35rem', minHeight: '28px', borderRadius: '5px', color: 'var(--danger)' }}
+              title={isAdmin ? "Keluar Mode Admin" : "Keluar Sesi Kunjungan"}
+              aria-label="Keluar"
+            >
+              <LogOut size={12} />
             </button>
 
           </div>

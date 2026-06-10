@@ -196,6 +196,14 @@ export const useMosqueData = () => {
     showToast('Anda telah keluar dari Mode Admin.', 'info');
   };
 
+  // Handler logout pengunjung (tamu)
+  const handleLogoutGuest = () => {
+    setIsGuestAuthenticated(false);
+    sessionStorage.removeItem('mesjid_digital_is_guest_authenticated');
+    setActiveTab('dashboard');
+    showToast('Anda telah keluar dari sesi kunjungan.', 'info');
+  };
+
   // Handler penyimpanan Kas Baru asinkron ke IndexedDB
   const handleSaveCash = async (data: Omit<CashTransaction, 'id' | 'date'>) => {
     const today = new Date().toISOString().split('T')[0];
@@ -415,6 +423,7 @@ export const useMosqueData = () => {
     handleGuestAccess,
     handleResetAdminPassword,
     handleLogoutAdmin,
+    handleLogoutGuest,
     handleSaveCash,
     handleSaveInventory,
     handleDeleteCash,

@@ -17,6 +17,7 @@ interface SidebarProps {
   setBarangSubTab: (subTab: 'catat' | 'stok') => void;
   isAdmin: boolean;
   onLogoutAdmin: () => void;
+  onLogoutGuest: () => void;
   mosqueName: string;
 }
 
@@ -26,6 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setBarangSubTab,
   isAdmin,
   onLogoutAdmin,
+  onLogoutGuest,
   mosqueName
 }) => {
   return (
@@ -84,20 +86,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <span>Tentang</span>
         </button>
         <div style={{ flex: 1 }}></div>
-        <button
-          onClick={isAdmin ? onLogoutAdmin : () => setActiveTab('pengaturan')}
-          className="sidebar-btn"
-          style={{ 
-            marginTop: 'auto', 
-            borderTop: '1px solid var(--border-subtle)', 
-            paddingTop: '0.85rem',
-            color: isAdmin ? 'var(--danger)' : 'var(--primary)'
-          }}
-          title={isAdmin ? "Keluar Mode Admin" : "Masuk Mode Admin"}
-        >
-          {isAdmin ? <LogOut size={16} /> : <LogIn size={16} />}
-          <span>{isAdmin ? 'Logout Admin' : 'Login Admin'}</span>
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginTop: 'auto', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.85rem', width: '100%' }}>
+          {!isAdmin && (
+            <button
+              onClick={() => setActiveTab('pengaturan')}
+              className="sidebar-btn"
+              style={{ color: 'var(--primary)', border: 'none', padding: '0.45rem 0.75rem' }}
+              title="Masuk Mode Admin"
+            >
+              <LogIn size={16} />
+              <span>Login Admin</span>
+            </button>
+          )}
+          <button
+            onClick={isAdmin ? onLogoutAdmin : onLogoutGuest}
+            className="sidebar-btn"
+            style={{ 
+              color: 'var(--danger)',
+              border: 'none',
+              padding: '0.45rem 0.75rem'
+            }}
+            title={isAdmin ? "Keluar Mode Admin" : "Keluar Sesi Tamu"}
+          >
+            <LogOut size={16} />
+            <span>{isAdmin ? 'Logout Admin' : 'Keluar'}</span>
+          </button>
+        </div>
       </nav>
     </aside>
   );

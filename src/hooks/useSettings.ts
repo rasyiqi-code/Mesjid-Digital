@@ -20,9 +20,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   dkmName: 'DKM Masjid Muttaqin',
   contactNumber: '',
   criticalStockThreshold: 10,
-  // Integrasi Google — sudah dikonfigurasi untuk Masjid Muttaqin
-  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbzHs36-arIW9L0ouFMyaAAG6_HJRMMm10ucEb0BNiuUw00Fgg0sPj6AbS84xl61K-zv/exec',
-  appsScriptToken: 'masjid-muttaqin-2026',
+  // Integrasi Google — diambil dari env jika ada, fallback ke hardcoded kode
+  appsScriptUrl: import.meta.env.VITE_DEFAULT_APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbzHs36-arIW9L0ouFMyaAAG6_HJRMMm10ucEb0BNiuUw00Fgg0sPj6AbS84xl61K-zv/exec',
+  appsScriptToken: import.meta.env.VITE_DEFAULT_APPS_SCRIPT_TOKEN || 'masjid-muttaqin-2026',
   lastSyncedAt: null,
 };
 

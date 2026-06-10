@@ -131,7 +131,7 @@ export const CashHistory: React.FC<CashHistoryProps> = ({
       </div>
 
       {/* Tampilan Mobile: Kartu Transaksi */}
-      <div className="mobile-card-list" style={{ maxHeight: '320px', overflowY: 'auto' }}>
+      <div className="mobile-card-list">
         {filteredTransactions.length === 0 ? (
           <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1rem', fontSize: '0.8rem' }}>
             Tidak ada transaksi kas.

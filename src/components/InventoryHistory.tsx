@@ -102,7 +102,7 @@ export const InventoryHistory: React.FC<InventoryHistoryProps> = ({
       </div>
 
       {/* Tampilan Mobile: Kartu */}
-      <div className="mobile-card-list" style={{ maxHeight: '320px', overflowY: 'auto' }}>
+      <div className="mobile-card-list">
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '1rem', fontSize: '0.8rem' }}>
             Tidak ada riwayat mutasi.

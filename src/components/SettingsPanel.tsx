@@ -15,6 +15,8 @@ import {
   Loader2,
   RefreshCw,
   Clock,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 import { pingAppsScript } from '../utils/sheetsApi';
 
@@ -58,6 +60,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   // ─── State Form Google Integration ──────────────────────────────────────
   const [appsScriptUrl, setAppsScriptUrl] = useState(settings.appsScriptUrl);
   const [appsScriptToken, setAppsScriptToken] = useState(settings.appsScriptToken);
+  const [isGoogleLocked, setIsGoogleLocked] = useState<boolean>(true);
   const [connStatus, setConnStatus] = useState<ConnectionStatus>('idle');
   const [connMessage, setConnMessage] = useState('');
   const [isSyncing, setIsSyncing] = useState(false);
@@ -231,10 +234,32 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             
             {/* ── Integrasi Google ─────────────────────────────────────────── */}
             <div className="glass-card" style={{ textAlign: 'left', borderColor: 'rgba(66, 133, 244, 0.2)', padding: '0.85rem 1rem' }}>
-              <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Wifi size={15} style={{ color: '#4285f4' }} />
-                Integrasi Google
-              </h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem', flexWrap: 'wrap', gap: '0.45rem' }}>
+                <h3 style={{ fontSize: '0.9rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Wifi size={15} style={{ color: '#4285f4' }} />
+                  Integrasi Google
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsGoogleLocked(!isGoogleLocked)}
+                  className="btn"
+                  style={{
+                    padding: '0.2rem 0.45rem',
+                    minHeight: '26px',
+                    borderRadius: '5px',
+                    fontSize: '0.7rem',
+                    gap: '0.25rem',
+                    background: isGoogleLocked ? 'rgba(0,0,0,0.02)' : 'rgba(245, 158, 11, 0.08)',
+                    color: isGoogleLocked ? 'var(--text-secondary)' : 'var(--accent)',
+                    border: `1px solid ${isGoogleLocked ? 'var(--border-subtle)' : 'rgba(245, 158, 11, 0.2)'}`,
+                    cursor: 'pointer'
+                  }}
+                  title={isGoogleLocked ? 'Klik untuk mengubah konfigurasi' : 'Kunci kembali konfigurasi'}
+                >
+                  {isGoogleLocked ? <Lock size={12} /> : <Unlock size={12} />}
+                  <span>{isGoogleLocked ? 'Buka Kunci' : 'Terkunci'}</span>
+                </button>
+              </div>
               <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginBottom: '0.85rem', lineHeight: 1.45 }}>
                 Hubungkan ke Google Sheets untuk backup data. Panduan di <strong>SETUP.md</strong>.
               </p>
@@ -253,6 +278,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   placeholder="https://script.google.com/macros/s/.../exec"
                   className="form-input"
                   style={{ fontFamily: 'monospace', fontSize: '0.75rem', minHeight: '36px', padding: '0.45rem 0.65rem' }}
+                  disabled={isGoogleLocked}
                 />
               </div>
 
@@ -270,6 +296,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   placeholder="Token DKM"
                   className="form-input"
                   style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
+                  disabled={isGoogleLocked}
                 />
               </div>
 

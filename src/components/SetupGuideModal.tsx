@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { X, FileText, ShieldAlert, Sparkles } from 'lucide-react';
 
 interface SetupGuideModalProps {
@@ -6,7 +7,7 @@ interface SetupGuideModalProps {
 }
 
 export const SetupGuideModal: React.FC<SetupGuideModalProps> = ({ onClose }) => {
-  return (
+  return createPortal(
     <div 
       className="drawer-overlay" 
       style={{ 
@@ -238,6 +239,7 @@ export const SetupGuideModal: React.FC<SetupGuideModalProps> = ({ onClose }) => 
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

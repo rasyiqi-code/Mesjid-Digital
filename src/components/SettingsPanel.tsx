@@ -17,8 +17,10 @@ import {
   Clock,
   Lock,
   Unlock,
+  HelpCircle,
 } from 'lucide-react';
 import { pingAppsScript } from '../utils/sheetsApi';
+import { SetupGuideModal } from './SetupGuideModal';
 
 interface SettingsPanelProps {
   settings: AppSettings;
@@ -61,6 +63,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const [appsScriptUrl, setAppsScriptUrl] = useState(settings.appsScriptUrl);
   const [appsScriptToken, setAppsScriptToken] = useState(settings.appsScriptToken);
   const [isGoogleLocked, setIsGoogleLocked] = useState<boolean>(true);
+  const [showGuideModal, setShowGuideModal] = useState<boolean>(false);
   const [connStatus, setConnStatus] = useState<ConnectionStatus>('idle');
   const [connMessage, setConnMessage] = useState('');
   const [isSyncing, setIsSyncing] = useState(false);
@@ -260,9 +263,33 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   <span>{isGoogleLocked ? 'Buka Kunci' : 'Terkunci'}</span>
                 </button>
               </div>
-              <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginBottom: '0.85rem', lineHeight: 1.45 }}>
-                Hubungkan ke Google Sheets untuk backup data. Panduan di <strong>SETUP.md</strong>.
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', background: 'rgba(66, 133, 244, 0.04)', padding: '0.55rem 0.75rem', borderRadius: '8px', border: '1px solid rgba(66, 133, 244, 0.1)', marginBottom: '0.85rem' }}>
+                <span style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                  Hubungkan ke Google Sheets & Drive.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowGuideModal(true)}
+                  className="btn"
+                  style={{
+                    padding: '0.25rem 0.55rem',
+                    minHeight: '26px',
+                    borderRadius: '5px',
+                    fontSize: '0.7rem',
+                    gap: '0.2rem',
+                    border: 'none',
+                    background: 'rgba(66, 133, 244, 0.08)',
+                    color: '#4285f4',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <HelpCircle size={11} />
+                  <span>Buka Panduan</span>
+                </button>
+              </div>
 
               <div className="form-group">
                 <label className="form-label" htmlFor="setting-script-url">
@@ -387,6 +414,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
         </div>
       </form>
+
+      {/* Modal Dokumentasi Setup Google Apps Script */}
+      {showGuideModal && (
+        <SetupGuideModal onClose={() => setShowGuideModal(false)} />
+      )}
 
     </div>
   );

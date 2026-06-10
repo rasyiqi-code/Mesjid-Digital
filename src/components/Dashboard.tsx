@@ -63,11 +63,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
             color: 'var(--accent)',
             fontSize: '0.75rem',
             textAlign: 'center',
-            fontWeight: 600
+            fontWeight: 600,
+            overflow: 'hidden'
           }}
         >
           <AlertTriangle size={14} style={{ flexShrink: 0 }} />
-          <span>Anda sedang dalam Mode Lihat-Saja (Tamu). Silakan login admin melalui menu Pengaturan untuk memasukkan data kas, barang, dan program.</span>
+          <div className="mobile-marquee-container" style={{ flex: 1, textAlign: 'left' }}>
+            <span className="mobile-marquee-content">
+              Anda sedang dalam Mode Lihat-Saja (Tamu). Silakan login admin melalui menu Pengaturan untuk memasukkan data kas, barang, dan program.
+            </span>
+          </div>
         </div>
       )}
 

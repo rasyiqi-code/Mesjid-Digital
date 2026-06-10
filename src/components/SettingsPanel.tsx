@@ -6,7 +6,6 @@ import {
   Building2,
   Phone,
   AlertTriangle,
-  User,
   Link2,
   KeyRound,
   Wifi,
@@ -398,17 +397,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               )}
             </div>
 
-            {/* ── Tentang Aplikasi ─────────────────────────────────────────── */}
-            <div className="glass-card" style={{ textAlign: 'left', padding: '0.85rem 1rem' }}>
-              <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.45rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <User size={15} style={{ color: 'var(--info)' }} />
-                Tentang Aplikasi
-              </h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                <strong style={{ color: 'var(--text-primary)' }}>Masjid Digital</strong> — Sistem Informasi Manajemen Mandiri Masjid.
-                <br />Versi 1.3.0 · Data disimpan lokal di IndexedDB perangkat.
-              </p>
-            </div>
 
           </div>
 

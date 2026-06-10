@@ -73,6 +73,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           title: 'Pengaturan Aplikasi',
           desc: 'Konfigurasi masjid & Google Sheets'
         };
+      case 'tentang':
+        return {
+          title: 'Tentang Aplikasi',
+          desc: 'Informasi sistem manajemen mandiri Masjid Digital'
+        };
       default:
         return {
           title: mosqueName,

@@ -335,6 +335,14 @@ function App() {
             <FileText size={16} />
             <span>Laporan</span>
           </button>
+          <button
+            onClick={() => setActiveTab('tentang')}
+            className={`sidebar-btn ${activeTab === 'tentang' ? 'active' : ''}`}
+            title="Tentang Aplikasi"
+          >
+            <Info size={16} />
+            <span>Tentang</span>
+          </button>
         </nav>
       </aside>
 
@@ -538,7 +546,46 @@ function App() {
               showToast={showToast}
             />
           )}
+
+          {activeTab === 'tentang' && (
+            <div className="glass-card animate-in-fade" style={{ textAlign: 'left', padding: '1.25rem', maxWidth: '600px', margin: '2rem auto', width: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-subtle)' }}>
+                <div style={{ background: 'rgba(6, 182, 212, 0.08)', color: 'var(--info)', padding: '0.55rem', borderRadius: '10px' }}>
+                  <Info size={24} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                    Tentang Aplikasi
+                  </h3>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0.15rem 0 0 0' }}>
+                    Sistem Informasi Manajemen Mandiri Masjid
+                  </p>
+                </div>
+              </div>
+              <div style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                <p>
+                  <strong style={{ color: 'var(--text-primary)' }}>Masjid Digital</strong> adalah platform administrasi modern yang dirancang khusus untuk mempermudah pengelolaan data keuangan, inventaris barang, serta jadwal kegiatan masjid secara mandiri, aman, dan efisien.
+                </p>
+                <p style={{ marginTop: '0.75rem' }}>
+                  Seluruh data disimpan secara lokal di dalam basis data browser (IndexedDB) perangkat Anda demi privasi optimal, dengan opsi sinkronisasi real-time ke Google Sheets & pencadangan bukti fisik otomatis ke Google Drive melalui Google Apps Script.
+                </p>
+                <div style={{ marginTop: '1.25rem', padding: '0.75rem', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '0.75rem' }}>
+                  <strong>Spesifikasi Sistem:</strong>
+                  <br />• Versi Aplikasi: 1.3.0
+                  <br />• Teknologi Penyimpanan: IndexedDB (Lokal Perangkat)
+                  <br />• Lisensi: Open Source / Mandiri
+                </div>
+              </div>
+            </div>
+          )}
         </main>
+
+        {/* Footer khusus mobile */}
+        <footer className="mobile-only" style={{ textAlign: 'center', padding: '1.25rem 0.5rem 0.5rem 0.5rem', marginTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+          <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', margin: 0 }}>
+            <strong>Masjid Digital</strong> v1.3.0 · Data disimpan lokal di IndexedDB.
+          </p>
+        </footer>
 
         {/* Modal Pratinjau Foto Bukti Transaksi */}
         {activeModalImage && (

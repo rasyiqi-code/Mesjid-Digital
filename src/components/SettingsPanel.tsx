@@ -352,33 +352,31 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 onClick={handleTestConnection}
                 disabled={connStatus === 'testing'}
                 className="btn btn-secondary"
-                style={{ width: '100%', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem', borderRadius: '6px' }}
+                style={{ width: '100%', padding: '0.45rem', minHeight: '34px', fontSize: '0.8rem', borderRadius: '6px', marginBottom: '0.85rem' }}
               >
                 {connStatus === 'testing'
                   ? <><Loader2 size={12} style={{ animation: 'spin 1s linear infinite' }} /> Menguji...</>
                   : <><Wifi size={12} /> Test Koneksi</>
                 }
               </button>
-            </div>
 
-            {/* ── Sinkronisasi Manual ke Google Sheets ─────────────────────── */}
-            <div className="glass-card" style={{
-              textAlign: 'left',
-              padding: '0.85rem 1rem',
-              borderColor: settings.appsScriptUrl ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.05)',
-            }}>
-              <h3 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <RefreshCw size={15} style={{ color: 'var(--primary)' }} />
-                Sinkronisasi ke Google Sheets
-              </h3>
+              {/* Garis Pembatas */}
+              <div style={{ borderTop: '1px solid var(--border-subtle)', margin: '0.85rem 0' }}></div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.725rem', color: 'var(--text-secondary)', marginBottom: '0.65rem' }}>
-                <Clock size={12} />
-                {formatLastSynced(settings.lastSyncedAt)}
+              {/* Bagian Sinkronisasi Manual */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem', flexWrap: 'wrap', gap: '0.45rem' }}>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <RefreshCw size={13} style={{ color: 'var(--primary)' }} />
+                  Sinkronisasi ke Google Sheets
+                </h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                  <Clock size={11} />
+                  <span>{formatLastSynced(settings.lastSyncedAt)}</span>
+                </div>
               </div>
 
               {!settings.appsScriptUrl ? (
-                <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
+                <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', fontStyle: 'italic', margin: 0 }}>
                   Konfigurasi URL dan Token di atas terlebih dahulu.
                 </p>
               ) : (
@@ -396,6 +394,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 </button>
               )}
             </div>
+
 
 
           </div>

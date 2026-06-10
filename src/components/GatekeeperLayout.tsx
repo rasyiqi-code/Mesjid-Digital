@@ -154,7 +154,7 @@ export const GatekeeperLayout: React.FC<GatekeeperLayoutProps> = ({
                 Silakan masukkan nama masjid "{mosqueName}" secara lengkap untuk membuka dasbor laporan keuangan dan logistik.
               </p>
 
-              <form onSubmit={handleGuestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <form onSubmit={handleGuestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} noValidate>
                 <div className="form-group" style={{ textAlign: 'left', marginBottom: 0 }}>
                   <label className="form-label" htmlFor="gate-guest-name">Nama Masjid</label>
                   <input
@@ -166,6 +166,9 @@ export const GatekeeperLayout: React.FC<GatekeeperLayoutProps> = ({
                     className="form-input"
                     style={{ minHeight: '38px', fontSize: '0.85rem' }}
                     required
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
                   />
                 </div>
 
@@ -223,7 +226,7 @@ export const GatekeeperLayout: React.FC<GatekeeperLayoutProps> = ({
                 Masukkan kata sandi administrator untuk mengaktifkan izin modifikasi data dan konfigurasi sistem.
               </p>
 
-              <form onSubmit={handleAdminSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <form onSubmit={handleAdminSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} noValidate>
                 <div className="form-group" style={{ textAlign: 'left', marginBottom: 0 }}>
                   <label className="form-label" htmlFor="gate-admin-pass">Kata Sandi Admin</label>
                   <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
@@ -240,6 +243,7 @@ export const GatekeeperLayout: React.FC<GatekeeperLayoutProps> = ({
                         fontSize: '0.85rem'
                       }}
                       required
+                      autoComplete="new-password"
                     />
                     <button
                       type="button"
@@ -356,7 +360,7 @@ export const GatekeeperLayout: React.FC<GatekeeperLayoutProps> = ({
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleResetSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <form onSubmit={handleResetSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} noValidate>
                   <div className="form-group" style={{ textAlign: 'left', marginBottom: 0 }}>
                     <label className="form-label" htmlFor="gate-reset-token">Token Apps Script</label>
                     <input
@@ -368,6 +372,9 @@ export const GatekeeperLayout: React.FC<GatekeeperLayoutProps> = ({
                       className="form-input"
                       style={{ minHeight: '38px', fontSize: '0.85rem' }}
                       required
+                      autoComplete="off"
+                      autoCorrect="off"
+                      spellCheck={false}
                     />
                   </div>
 

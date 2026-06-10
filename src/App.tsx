@@ -36,7 +36,6 @@ import {
   LayoutDashboard, 
   PlusCircle, 
   FileText, 
-  FolderOpen, 
   Info, 
   CheckCircle2, 
   AlertCircle, 
@@ -390,6 +389,9 @@ function App() {
           onManualSync={triggerSync}
           onOpenSettings={() => setActiveTab('pengaturan')}
           mosqueName={settings.mosqueName}
+          activeTab={activeTab}
+          barangSubTab={barangSubTab}
+          setBarangSubTab={setBarangSubTab}
         />
 
         <main style={{ minHeight: '60vh' }} className="animate-in-fade">
@@ -441,51 +443,39 @@ function App() {
 
           {activeTab === 'catat_barang' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              {/* Sub-tab: Mutasi vs Stok */}
-              <div style={{ display: 'flex', gap: '0.35rem', background: 'rgba(255,255,255,0.02)', padding: '0.25rem', borderRadius: '10px', maxWidth: '300px', margin: '0 auto', width: '100%', border: '1px solid var(--border-subtle)' }}>
-                <button
-                  onClick={() => setBarangSubTab('catat')}
-                  className={`btn ${barangSubTab === 'catat' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ flex: 1, padding: '0.45rem', fontSize: '0.8rem', borderRadius: '6px', minHeight: '32px' }}
-                >
-                  <PackageCheck size={14} /> Mutasi
-                </button>
-                <button
-                  onClick={() => setBarangSubTab('stok')}
-                  className={`btn ${barangSubTab === 'stok' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ flex: 1, padding: '0.45rem', fontSize: '0.8rem', borderRadius: '6px', minHeight: '32px' }}
-                >
-                  <FolderOpen size={14} /> Stok
-                </button>
+              {/* Header Halaman Barang & Pilihan Sub-Tab */}
+              <div className="glass-card flex-mobile-col" style={{ padding: '0.75rem 1rem', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '0.85rem' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Inventaris & Logistik Gudang</h3>
+                    <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                      Kelola persediaan barang dan mutasi logistik masjid
+                    </p>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                    {/* Tombol Catat Mutasi (Hanya muncul jika sub-tab Mutasi aktif) */}
+                    {barangSubTab === 'catat' && (
+                      <button
+                        onClick={() => setIsInventoryDrawerOpen(true)}
+                        className="btn btn-primary"
+                        style={{ gap: '0.35rem', padding: '0.45rem 0.85rem', fontSize: '0.8rem', minHeight: '34px', borderRadius: '6px' }}
+                      >
+                        <PlusCircle size={15} />
+                        Catat Mutasi
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Sub-tab Mutasi: Riwayat mutasi barang saja */}
               {barangSubTab === 'catat' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                  {/* Header Riwayat Mutasi & Tombol Aksi */}
-                  <div className="glass-card flex-mobile-col" style={{ padding: '0.75rem 1rem' }}>
-                    <div>
-                      <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Riwayat Mutasi Logistik</h3>
-                      <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-                        Daftar barang masuk dan keluar di gudang masjid
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setIsInventoryDrawerOpen(true)}
-                      className="btn btn-primary"
-                      style={{ gap: '0.35rem', padding: '0.45rem 0.85rem', fontSize: '0.8rem', minHeight: '34px', borderRadius: '6px' }}
-                    >
-                      <PlusCircle size={15} />
-                      Catat Mutasi
-                    </button>
-                  </div>
-
-                  <div className="glass-card">
-                    <InventoryHistory
-                      transactions={invHistory}
-                      onDelete={handleDeleteInventory}
-                    />
-                  </div>
+                <div className="glass-card">
+                  <InventoryHistory
+                    transactions={invHistory}
+                    onDelete={handleDeleteInventory}
+                  />
                 </div>
               )}
 

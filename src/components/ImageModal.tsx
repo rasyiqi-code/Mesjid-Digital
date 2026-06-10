@@ -32,7 +32,19 @@ export const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, onClose }) => 
     return url;
   };
 
+  // Fungsi membuat tautan preview resmi Google Drive untuk di-embed dalam iframe
+  const getDrivePreviewUrl = (url: string) => {
+    if (url.includes('drive.google.com')) {
+      const match = url.match(/(?:id=|\/d\/)([\w-]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/file/d/${match[1]}/preview`;
+      }
+    }
+    return null;
+  };
+
   const friendlyUrl = getFriendlyDriveUrl(imageUrl);
+  const drivePreviewUrl = getDrivePreviewUrl(imageUrl);
   const isDriveUrl = imageUrl.includes('drive.google.com');
 
   return (
@@ -53,7 +65,8 @@ export const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, onClose }) => 
           justifyContent: 'center',
           padding: '1.25rem',
           minWidth: isDriveUrl || hasError ? '320px' : 'auto',
-          maxWidth: '500px',
+          width: drivePreviewUrl && !hasError ? '90vw' : 'auto',
+          maxWidth: drivePreviewUrl && !hasError ? '800px' : '500px',
           background: 'var(--bg-card)',
           backdropFilter: 'blur(20px)',
           border: '1px solid var(--border-subtle)'
@@ -93,8 +106,35 @@ export const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, onClose }) => 
               Buka Gambar di Tab Baru
             </a>
           </div>
+        ) : drivePreviewUrl ? (
+          /* Embed Viewer Google Drive Resmi */
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <iframe 
+              src={drivePreviewUrl} 
+              title="Pratinjau Bukti Transaksi Google Drive"
+              style={{ 
+                width: '100%', 
+                height: '65vh', 
+                minHeight: '350px',
+                border: 'none', 
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.5)'
+              }}
+              allow="autoplay"
+            />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <a 
+                href={friendlyUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                style={{ fontSize: '0.7rem', color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}
+              >
+                <ExternalLink size={12} /> Buka di tab baru jika dokumen tidak muncul
+              </a>
+            </div>
+          </div>
         ) : (
-          /* Gambar Bukti Transaksi */
+          /* Gambar Bukti Transaksi Biasa */
           <img 
             src={imageUrl} 
             alt="Bukti Transaksi Fullscreen" 

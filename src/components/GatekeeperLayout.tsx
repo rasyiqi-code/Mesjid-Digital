@@ -151,7 +151,7 @@ export const GatekeeperLayout: React.FC<GatekeeperLayoutProps> = ({
                 Akses Pengunjung (Lihat-Saja)
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: '0 0 1.5rem 0' }}>
-                Silakan masukkan nama masjid secara lengkap untuk membuka dasbor laporan keuangan dan logistik.
+                Silakan masukkan nama masjid "{mosqueName}" secara lengkap untuk membuka dasbor laporan keuangan dan logistik.
               </p>
 
               <form onSubmit={handleGuestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

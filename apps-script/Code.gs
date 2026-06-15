@@ -329,7 +329,7 @@ function updateLaporanKasSheet(ss) {
   reportSheet.clearFormats();
   
   // Matikan gridlines untuk tampilan embed website yang lebih clean
-  reportSheet.setGridlines(false);
+  reportSheet.setHiddenGridlines(true);
 
   // 3. Tulis Judul Laporan (Header Utama)
   reportSheet.getRange('A1').setValue('LAPORAN RINGKASAN KEUANGAN KAS MASJID');

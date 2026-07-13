@@ -308,11 +308,12 @@ function App() {
                 <p style={{ marginTop: '0.75rem' }}>
                   Seluruh data disimpan secara lokal di dalam basis data browser (IndexedDB) perangkat Anda demi privasi optimal, dengan opsi sinkronisasi real-time ke Google Sheets & pencadangan bukti fisik otomatis ke Google Drive melalui Google Apps Script.
                 </p>
-                <div style={{ marginTop: '1.25rem', padding: '0.75rem', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '0.75rem' }}>
+                <div style={{ marginTop: '1.25rem', padding: '0.75rem', background: 'rgba(255, 255, 255, 0.01)', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '0.75rem' }}>
                   <strong>Spesifikasi Sistem:</strong>
                   <br />• Versi Aplikasi: 1.3.0
                   <br />• Teknologi Penyimpanan: IndexedDB (Lokal Perangkat)
                   <br />• Lisensi: Open Source / Mandiri
+                  <br />• Pengembang: <a href="https://api.whatsapp.com/send/?phone=6285183131249&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'underline' }}>Rasyiqi - Crediblemark</a>
                 </div>
               </div>
             </div>

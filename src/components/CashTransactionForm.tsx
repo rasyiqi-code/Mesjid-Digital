@@ -21,6 +21,7 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
   const [category, setCategory] = useState<string>('');
   const [amountStr, setAmountStr] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [donatur, setDonatur] = useState<string>('');
   const [evidence, setEvidence] = useState<string>(''); // base64 atau URL Drive
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,12 +109,14 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
       amount,
       description,
       evidence: finalEvidence || undefined,
+      donatur: type === 'pemasukan' ? donatur.trim() || undefined : undefined,
     });
 
     // Reset Form
     setCategory('');
     setAmountStr('');
     setDescription('');
+    setDonatur('');
     setEvidence('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -192,6 +195,22 @@ export const CashTransactionForm: React.FC<CashTransactionFormProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Input Donatur/Pemberi jika Pemasukan */}
+        {type === 'pemasukan' && (
+          <div className="form-group animate-in-fade">
+            <label className="form-label" htmlFor="cash-donatur">Nama Donatur / Pemberi Infaq (Opsional)</label>
+            <input
+              id="cash-donatur"
+              type="text"
+              value={donatur}
+              onChange={(e) => setDonatur(e.target.value)}
+              placeholder="Nama donatur atau hamba Allah..."
+              className="form-input"
+              style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
+            />
+          </div>
+        )}
 
         {/* Input Keterangan Opsional */}
         <div className="form-group">

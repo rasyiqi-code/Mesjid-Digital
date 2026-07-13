@@ -3,7 +3,6 @@ import {
   LayoutDashboard, 
   BookOpen, 
   PackageCheck, 
-  CalendarCheck, 
   FileText, 
   Info, 
   LogIn, 
@@ -61,14 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <PackageCheck size={16} />
           <span>Barang</span>
         </button>
-        <button
-          onClick={() => setActiveTab('program')}
-          className={`sidebar-btn ${activeTab === 'program' ? 'active' : ''}`}
-          title="Jadwal Program & Kegiatan"
-        >
-          <CalendarCheck size={16} />
-          <span>Program</span>
-        </button>
+
         <button
           onClick={() => setActiveTab('laporan')}
           className={`sidebar-btn ${activeTab === 'laporan' ? 'active' : ''}`}

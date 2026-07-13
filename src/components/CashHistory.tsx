@@ -82,6 +82,11 @@ export const CashHistory: React.FC<CashHistoryProps> = ({
                     </td>
                     <td style={{ fontWeight: 600 }}>
                       <div>{tx.category}</div>
+                      {tx.donatur && (
+                        <div style={{ fontSize: '0.7rem', color: 'var(--primary)', fontWeight: 600, marginTop: '0.05rem' }}>
+                          Donatur: {tx.donatur}
+                        </div>
+                      )}
                       {tx.description && (
                         <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 'normal', marginTop: '0.1rem' }}>
                           {tx.description}
@@ -148,6 +153,11 @@ export const CashHistory: React.FC<CashHistoryProps> = ({
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.45rem' }}>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ fontSize: '0.85rem', fontWeight: 700 }}>{tx.category}</h4>
+                  {tx.donatur && (
+                    <div style={{ fontSize: '0.725rem', color: 'var(--primary)', fontWeight: 600, marginTop: '0.1rem' }}>
+                      Donatur: {tx.donatur}
+                    </div>
+                  )}
                   <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>
                     {tx.description || '-'}
                   </p>

@@ -3,7 +3,6 @@ import {
   LayoutDashboard, 
   BookOpen, 
   PackageCheck, 
-  CalendarCheck, 
   FileText 
 } from 'lucide-react';
 
@@ -41,13 +40,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         <PackageCheck size={16} />
         <span>Barang</span>
       </button>
-      <button
-        onClick={() => setActiveTab('program')}
-        className={`mobile-nav-btn ${activeTab === 'program' ? 'active' : ''}`}
-      >
-        <CalendarCheck size={16} />
-        <span>Program</span>
-      </button>
+
       <button
         onClick={() => setActiveTab('laporan')}
         className={`mobile-nav-btn ${activeTab === 'laporan' ? 'active' : ''}`}

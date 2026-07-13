@@ -7,6 +7,7 @@ export interface CashTransaction {
   description: string;
   date: string;
   evidence?: string; // Menyimpan gambar bukti dalam format Base64
+  donatur?: string;  // Menyimpan nama donatur/pemberi infaq (opsional)
 }
 
 // Tipe data untuk transaksi Barang (Inventaris)

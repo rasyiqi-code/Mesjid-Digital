@@ -87,7 +87,14 @@ export const ReportPreviewCash: React.FC<ReportPreviewCashProps> = ({
                         {t.type === 'pemasukan' ? 'Masuk' : 'Keluar'}
                       </span>
                     </td>
-                    <td style={{ fontWeight: 600 }}>{t.category}</td>
+                    <td style={{ fontWeight: 600 }}>
+                      <div>{t.category}</div>
+                      {t.donatur && (
+                        <div style={{ fontSize: '0.7rem', color: 'var(--primary)', fontWeight: 600, marginTop: '0.05rem' }}>
+                          Donatur: {t.donatur}
+                        </div>
+                      )}
+                    </td>
                     <td style={{ color: 'var(--text-secondary)' }}>{t.description || '-'}</td>
                     <td style={{ fontWeight: 700, color: t.type === 'pemasukan' ? 'var(--primary)' : 'var(--danger)' }}>
                       {t.type === 'pemasukan' ? '+' : '-'}{formatRupiah(t.amount)}
@@ -118,6 +125,11 @@ export const ReportPreviewCash: React.FC<ReportPreviewCashProps> = ({
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <h4 style={{ fontSize: '0.8rem', fontWeight: 700 }}>{t.category}</h4>
+                  {t.donatur && (
+                    <div style={{ fontSize: '0.7rem', color: 'var(--primary)', fontWeight: 600, marginTop: '0.05rem' }}>
+                      Donatur: {t.donatur}
+                    </div>
+                  )}
                   <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>
                     {t.description || '-'}
                   </p>

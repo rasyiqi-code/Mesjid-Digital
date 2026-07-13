@@ -21,10 +21,12 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 }) => {
   const [type, setType] = useState<'masuk' | 'keluar'>('masuk');
   const [itemName, setItemName] = useState<string>('');
-  const [amount, setAmount] = useState<number | ''>('');
+  const [amountStr, setAmountStr] = useState<string>('');
   const [unit, setUnit] = useState<string>('Kg');
+  const [customUnit, setCustomUnit] = useState<string>('');
   const [donatur, setDonatur] = useState<string>('');
   const [category, setCategory] = useState<string>('Bahan Pokok');
+  const [customCategory, setCustomCategory] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   
   // State untuk autocomplete nama barang
@@ -84,25 +86,55 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
     // Set satuan dan kategori otomatis jika sudah ada datanya
     const found = existingItems.find(item => item.name.toLowerCase() === name.toLowerCase());
     if (found) {
-      setUnit(found.unit);
-      setCategory(found.category);
+      const knownUnits = ['Kg', 'Liter', 'Pcs', 'Dus', 'Karung'];
+      if (knownUnits.includes(found.unit)) {
+        setUnit(found.unit);
+        setCustomUnit('');
+      } else {
+        setUnit('Lainnya');
+        setCustomUnit(found.unit);
+      }
+
+      const knownCategories = ['Bahan Pokok', 'Sarana Ibadah', 'Kebersihan', 'Operasional', 'Habis Pakai'];
+      if (knownCategories.includes(found.category)) {
+        setCategory(found.category);
+        setCustomCategory('');
+      } else {
+        setCategory('Lainnya');
+        setCustomCategory(found.category);
+      }
+    }
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    if (value) {
+      const formatted = parseInt(value, 10).toLocaleString('id-ID');
+      setAmountStr(formatted);
+    } else {
+      setAmountStr('');
     }
   };
 
   const executeSave = (trimmedName: string, amt: number) => {
+    const finalUnit = unit === 'Lainnya' ? customUnit.trim() || 'Lainnya' : unit;
+    const finalCategory = category === 'Lainnya' ? customCategory.trim() || 'Lainnya' : category;
+
     onSave({
       type,
       itemName: trimmedName,
       amount: amt,
-      unit,
-      category: type === 'masuk' ? category : '', // Kategori hanya untuk barang masuk
+      unit: finalUnit,
+      category: type === 'masuk' ? finalCategory : '', // Kategori hanya untuk barang masuk
       donatur: type === 'masuk' ? donatur : undefined,
       description: type === 'keluar' ? description : undefined,
     });
 
     // Reset Form
     setItemName('');
-    setAmount('');
+    setAmountStr('');
+    setCustomUnit('');
+    setCustomCategory('');
     setDonatur('');
     setDescription('');
     setCurrentStock(0);
@@ -111,7 +143,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const amt = Number(amount);
+    const amt = parseInt(amountStr.replace(/[^0-9]/g, ''), 10);
     const trimmedName = itemName.trim();
 
     if (!trimmedName) {
@@ -123,12 +155,26 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
       return;
     }
 
+    const finalUnit = unit === 'Lainnya' ? customUnit.trim() : unit;
+    if (!finalUnit) {
+      showToast('Harap isi satuan barang!', 'error');
+      return;
+    }
+
+    if (type === 'masuk') {
+      const finalCategory = category === 'Lainnya' ? customCategory.trim() : category;
+      if (!finalCategory) {
+        showToast('Harap isi kategori barang!', 'error');
+        return;
+      }
+    }
+
     // Validasi stok asinkron jika barang keluar
     if (type === 'keluar') {
       getDBItemStock(trimmedName)
         .then((stock) => {
           if (amt > stock) {
-            showToast(`Stok ${trimmedName} kurang! Stok saat ini: ${stock} ${unit}. Transaksi dibatalkan.`, 'error');
+            showToast(`Stok ${trimmedName} kurang! Stok saat ini: ${stock} ${finalUnit}. Transaksi dibatalkan.`, 'error');
           } else {
             executeSave(trimmedName, amt);
           }
@@ -226,13 +272,12 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
             <label className="form-label" htmlFor="inv-amount">Jumlah</label>
             <input
               id="inv-amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value ? Number(e.target.value) : '')}
+              type="text"
+              value={amountStr}
+              onChange={handleAmountChange}
               placeholder="0"
               className="form-input"
               style={{ minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
-              min="1"
               required
             />
           </div>
@@ -252,7 +297,19 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
               <option value="Pcs">Pcs (Pieces/Buah)</option>
               <option value="Dus">Dus / Karton</option>
               <option value="Karung">Karung</option>
+              <option value="Lainnya">Lain-lain (Tulis Manual)</option>
             </select>
+            {unit === 'Lainnya' && (
+              <input
+                type="text"
+                value={customUnit}
+                onChange={(e) => setCustomUnit(e.target.value)}
+                placeholder="Tulis satuan (misal: dam truk, tossa)..."
+                className="form-input"
+                style={{ marginTop: '0.35rem', minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
+                required
+              />
+            )}
           </div>
         </div>
 
@@ -286,7 +343,19 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
                 <option value="Kebersihan">Kebersihan</option>
                 <option value="Operasional">Operasional</option>
                 <option value="Habis Pakai">Habis Pakai</option>
+                <option value="Lainnya">Lain-lain (Tulis Manual)</option>
               </select>
+              {category === 'Lainnya' && (
+                <input
+                  type="text"
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                  placeholder="Tulis kategori baru..."
+                  className="form-input"
+                  style={{ marginTop: '0.35rem', minHeight: '36px', padding: '0.45rem 0.65rem', fontSize: '0.85rem' }}
+                  required
+                />
+              )}
             </div>
           </div>
         )}

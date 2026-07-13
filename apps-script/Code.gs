@@ -33,7 +33,7 @@ const SHEET = {
 
 /** Kolom header setiap tab */
 const HEADERS = {
-  KAS: ['id', 'type', 'category', 'amount', 'description', 'date', 'evidenceUrl'],
+  KAS: ['id', 'type', 'category', 'amount', 'description', 'date', 'evidenceUrl', 'donatur'],
   BARANG: ['id', 'type', 'itemName', 'amount', 'unit', 'donatur', 'category', 'description', 'date'],
   PROGRAM: ['id', 'title', 'dayOrDate', 'time', 'location', 'picName', 'description', 'isRecurring', 'recurrenceType', 'createdAt'],
 };
@@ -435,11 +435,14 @@ function updateLaporanKasSheet(ss) {
           displayDate = day + '/' + month + '/' + year;
         } catch (e) {}
       }
+      const desc = t.donatur 
+        ? (t.description ? `${t.description} (Donatur: ${t.donatur})` : `Donatur: ${t.donatur}`)
+        : (t.description || '');
       return [
         idx + 1,
         displayDate,
         t.category || '',
-        t.description || '',
+        desc,
         t.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran',
         Number(t.amount) || 0
       ];

@@ -25,9 +25,8 @@ export const exportToPDF = (
   selectedMonth: number,
   selectedYear: number,
   months: string[],
-  formatRupiah: (value: number) => string,
-  showToast: (msg: string, type: 'success' | 'info' | 'error') => void
-) => {
+  formatRupiah: (value: number) => string
+): { blob: Blob; filename: string } => {
   const doc = new jsPDF();
   const title = `Laporan Mesjid Digital - ${reportType === 'kas' ? 'Kas Bulanan' : reportType === 'stok' ? 'Stok Barang' : 'Daftar Inventaris'}`;
   const period = reportType !== 'inventaris' ? `Periode: ${months[selectedMonth]} ${selectedYear}` : 'Kondisi Stok Real-Time';
@@ -105,9 +104,10 @@ export const exportToPDF = (
           doc.addPage();
           yPosition = 20;
         }
+        const categoryText = t.category + (t.donatur ? ` (Donatur: ${t.donatur})` : '');
         doc.text(t.date, 18, yPosition + 6);
         doc.text(t.type === 'pemasukan' ? 'Masuk' : 'Keluar', 45, yPosition + 6);
-        doc.text(t.category, 75, yPosition + 6);
+        doc.text(categoryText.length > 35 ? categoryText.substring(0, 32) + '...' : categoryText, 75, yPosition + 6);
         doc.text(formatRupiah(t.amount), 145, yPosition + 6);
         
         yPosition += 9;
@@ -224,33 +224,32 @@ export const exportToPDF = (
   doc.text('Ketua DKM Masjid', 40, yPosition + 5);
   doc.text('Bendahara Masjid', 150, yPosition + 5);
 
-  // Unduh PDF
-  doc.save(`Laporan_Mesjid_Digital_${reportType}_${selectedMonth + 1}_${selectedYear}.pdf`);
-  showToast('Laporan berhasil diekspor sebagai PDF.', 'success');
+  const filename = `Laporan_Mesjid_Digital_${reportType}_${selectedMonth + 1}_${selectedYear}.pdf`;
+  const blob = doc.output('blob');
+  return { blob, filename };
 };
 
-// Pembuatan dan Pengunduhan Berkas CSV
 export const exportToCSV = (
   reportType: 'kas' | 'stok' | 'inventaris',
   reportData: ReportExportData,
   selectedMonth: number,
-  selectedYear: number,
-  showToast: (msg: string, type: 'success' | 'info' | 'error') => void
-) => {
+  selectedYear: number
+): { blob: Blob; filename: string } => {
   let csvContent = '\uFEFF'; // Byte Order Mark (BOM) agar Excel mengenali karakter UTF-8
   let filename = `Laporan_Mesjid_Digital_${reportType}_${selectedMonth + 1}_${selectedYear}.csv`;
 
   if (reportType === 'kas' && reportData.cashSummary) {
     const summary = reportData.cashSummary;
-    csvContent += 'Tanggal,Jenis Transaksi,Kategori Kas,Keterangan,Nominal Rupiah\n';
-    csvContent += `,,Saldo Awal Bulan,,${summary.openingBalance}\n`;
+    csvContent += 'Tanggal,Jenis Transaksi,Kategori Kas,Donatur,Keterangan,Nominal Rupiah\n';
+    csvContent += `,,,Saldo Awal Bulan,,${summary.openingBalance}\n`;
     summary.transactions.forEach((t) => {
       const desc = t.description ? t.description.replace(/"/g, '""') : '';
-      csvContent += `"${t.date}","${t.type === 'pemasukan' ? 'Masuk' : 'Keluar'}","${t.category}","${desc}","${t.amount}"\n`;
+      const don = t.donatur ? t.donatur.replace(/"/g, '""') : '';
+      csvContent += `"${t.date}","${t.type === 'pemasukan' ? 'Masuk' : 'Keluar'}","${t.category}","${don}","${desc}","${t.amount}"\n`;
     });
-    csvContent += `,,Total Pemasukan,,${summary.totalIncome}\n`;
-    csvContent += `,,Total Pengeluaran,,${summary.totalExpense}\n`;
-    csvContent += `,,Saldo Akhir Kas,,${summary.closingBalance}\n`;
+    csvContent += `,,,Total Pemasukan,,${summary.totalIncome}\n`;
+    csvContent += `,,,Total Pengeluaran,,${summary.totalExpense}\n`;
+    csvContent += `,,,Saldo Akhir Kas,,${summary.closingBalance}\n`;
   } 
   
   else if (reportType === 'stok' && reportData.stockSummary) {
@@ -273,15 +272,7 @@ export const exportToCSV = (
   }
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', filename);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  showToast('Laporan berhasil diekspor sebagai CSV.', 'success');
+  return { blob, filename };
 };
 
 // Membagikan Laporan lewat WhatsApp Web

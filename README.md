@@ -1,73 +1,120 @@
-# React + TypeScript + Vite
+# Mesjid-Digital 🕌
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive digital platform designed for modern mosques to streamline operations, enhance community engagement, and manage religious activities efficiently.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Mesjid-Digital is a full-featured mosque management system that combines prayer schedules, community announcements, event management, and administrative tools in one unified platform. Built with modern web technologies, it provides a seamless experience for both administrators and community members.
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 📅 **Prayer Schedule Management** - Automatic prayer time calculations and schedule management
+- 📢 **Community Announcements** - Post and manage mosque announcements and news
+- 🎉 **Event Management** - Create, schedule, and promote mosque events
+- 👥 **Member Management** - Manage mosque community members and their information
+- 📊 **Dashboard & Analytics** - Track attendance and community engagement
+- 🔐 **Secure Authentication** - Role-based access control for different user types
+- 📱 **Responsive Design** - Works seamlessly on desktop and mobile devices
+- 🌍 **Multi-language Support** - Support for multiple languages
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: TypeScript (84.5%), React, Vite
+- **Styling**: CSS (9.1%), modern responsive design
+- **Build Tool**: Vite with HMR (Hot Module Replacement)
+- **Tooling**: JavaScript (5.9%), ESLint for code quality
+- **Package Manager**: npm/yarn
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js (v16 or higher)
+- npm or yarn
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/rasyiqi-code/Mesjid-Digital.git
+   cd Mesjid-Digital
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+## Project Structure
+
+```
+Mesjid-Digital/
+├── src/
+│   ├── components/      # React components
+│   ├── pages/          # Page components
+│   ├── styles/         # CSS styles
+│   ├── utils/          # Utility functions
+│   ├── hooks/          # Custom React hooks
+│   └── App.tsx         # Main app component
+├── public/             # Static assets
+├─��� package.json        # Project dependencies
+├── tsconfig.json       # TypeScript configuration
+├── vite.config.ts      # Vite configuration
+└── README.md          # This file
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Available Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `npm run dev` - Start the development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview the production build
+- `npm run lint` - Run ESLint checks
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Development
+
+### ESLint Configuration
+
+For production applications, we recommend enabling type-aware lint rules. Refer to the project's ESLint configuration in `eslint.config.js` for more details.
+
+### React Compiler
+
+The React Compiler is not enabled by default due to its impact on build performance. To enable it, see the [React Compiler documentation](https://react.dev/learn/react-compiler/installation).
+
+## Contributing
+
+We welcome contributions from the community! To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure your code follows our coding standards and includes appropriate tests.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, questions, or feature requests, please open an issue on the [GitHub repository](https://github.com/rasyiqi-code/Mesjid-Digital/issues).
+
+## Acknowledgments
+
+- Built with [React](https://react.dev)
+- Powered by [Vite](https://vite.dev)
+- TypeScript for type safety
+- Community contributions and feedback
+
+---
+
+**Mesjid-Digital** - Empowering Modern Mosques with Digital Solutions 🌟
